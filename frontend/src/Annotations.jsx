@@ -1,8 +1,10 @@
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import Slider from "rc-slider";
 
+import { v4 as uuidv4 } from "uuid";
+
 import { useSelector, useDispatch } from "react-redux";
-import { testfunction } from "./store/annotation-slice";
+import { testfunction, addNewEvent } from "./store/annotation-slice";
 
 import {
   secondsToMinAndSec,
@@ -12,16 +14,14 @@ import Scrollbar from "./Scrollbar";
 
 const Annotations = (props) => {
   const dispatch = useDispatch();
-  dispatch(testfunction());
-  const DUMMY_ANNOTATIONS = [
-    {
-      id: "testid1",
-      category: "mouse1",
-      event_time_sec: 24.5,
-      measure_at_time_sec: 135,
-      type: "void",
-    },
-  ];
+  const reduxState = useSelector((state) => state.annotation.data);
+  //   console.log(reduxState);
+
+  const timelineContainerRef = useRef();
+  const [timelineContainerWidth, setTimelineContainerWidth] = useState(null);
+  useEffect(() => {
+    setTimelineContainerWidth(timelineContainerRef?.current?.offsetWidth);
+  }, []);
 
   const [zoom, setZoom] = useState(1);
   const zoomIncrement = 1;
@@ -131,10 +131,50 @@ const Annotations = (props) => {
     props.onMouseUp(parseFloat(playedFrac));
   };
 
-  const addTimelineEventHandler = (e) => {
+  const addTimelineEventHandler = (e, type) => {
+    console.log(e, type);
     const categoryName = e.target.id;
     const currentTime = props.videoState.playedSec;
-    console.log(categoryName, currentTime);
+    const eventID = uuidv4();
+    // console.log(categoryName, currentTime);
+
+    dispatch(
+      addNewEvent({
+        eventType: type,
+        eventTime: currentTime,
+        category: categoryName,
+        eventID: eventID,
+      })
+    );
+
+    props.setSelectedAnnotationIdentifiers({
+      categoryName: categoryName,
+      eventID: eventID,
+    });
+
+    // console.log(test, "🌹");
+  };
+
+  const annotationClickHandler = (e) => {
+    console.log("clicked annotation id", e.target.closest("button").id);
+    const annotationInformation = e.target.closest("button").id.split("_");
+    const categoryName = annotationInformation[0];
+    const eventID = annotationInformation[1];
+    props.setSelectedAnnotationIdentifiers({
+      categoryName: categoryName,
+      eventID: eventID,
+    });
+
+    const annotationDataFromRedux = reduxState
+      .filter((cat) => {
+        return cat.categoryName === categoryName;
+      })[0]
+      .events.filter((event) => {
+        return event.eventID === eventID;
+      })[0];
+    console.log(annotationDataFromRedux, annotationDataFromRedux.eventTime);
+
+    props.seekTo(annotationDataFromRedux.eventTimeSec);
   };
 
   // // JSX // //
@@ -150,10 +190,141 @@ const Annotations = (props) => {
     }
   });
 
+  const annotationCategoryHeadersJSX = reduxState.map((cat) => {
+    return (
+      <div
+        className="h-8 border-y-[1px] flex gap-2 items-center"
+        key={cat.categoryName}
+      >
+        <p className="text-xs">{cat.categoryName}</p>
+        <div className="flex gap-1">
+          <button
+            className="bg-green-300 px-[6px]"
+            id={cat.categoryName}
+            onClick={(e) => addTimelineEventHandler(e, "void")}
+          >
+            V
+          </button>
+          <button
+            className="bg-yellow-500 px-[6px]"
+            id={cat.categoryName}
+            onClick={(e) => addTimelineEventHandler(e, "leak")}
+          >
+            L
+          </button>
+        </div>
+      </div>
+    );
+  });
+
+  //   console.log(reduxState);
+
+  const annotationsJSX = reduxState.map((cat, index) => {
+    return (
+      <div
+        className={`h-8 relative flex ${
+          index === 0 ? "border-y-[1px]" : "border-b-[1px]"
+        }`}
+        key={cat.categoryName}
+      >
+        {/* {console.log(cat.events, index, "tsratsra", timelineValueRange)} */}
+        {cat.events
+          .filter((event) => {
+            return (
+              event.eventTimeSec > timelineValueRange[0] &&
+              event.eventTimeSec < timelineValueRange[1]
+              // need to add some sort of statement so that even if only measureAtTime
+              // is in the timeline range it still shows up.
+              // or maybe even make it a separate map function
+            );
+          })
+          .map((event) => {
+            const eventOffsetLeft =
+              ((event.eventTimeSec - timelineValueRange[0]) /
+                props.videoState.duration) *
+              timelineContainerWidth *
+              zoom;
+
+            const measureAtTimeInRange =
+              event.measureAtTimeSec > timelineValueRange[0] &&
+              event.measureAtTimeSec < timelineValueRange[1];
+
+            const measureAtTimeOffsetLeftFromEventTime =
+              ((event.measureAtTimeSec - event.eventTimeSec) /
+                //  -
+                // timelineValueRange[0]
+                props.videoState.duration) *
+              timelineContainerWidth *
+              zoom;
+
+            // event type:
+            // void -> if has measureattime, set color (blue)
+            // void -> if doesnt have measureat time, set color (red)
+            // leak -> set color (orange)
+            const isVoid = event.eventType === "void";
+            const isLeak = event.eventType === "leak";
+
+            const voidDataIsComplete =
+              isVoid && event.measureAtTimeSec !== null;
+
+            let color;
+            if (isVoid && voidDataIsComplete) {
+              color = "bg-blue-400";
+            }
+            if (isVoid && !voidDataIsComplete) {
+              color = "bg-red-500";
+            }
+            if (isLeak) {
+              color = "bg-orange-400";
+            }
+
+            return (
+              //   <div>
+              <button
+                key={event.eventID}
+                className={`${color} w-1 h-full absolute group`}
+                style={{
+                  left: `${eventOffsetLeft}px`,
+                }}
+                onClick={annotationClickHandler}
+                id={`${cat.categoryName}_${event.eventID}`}
+              >
+                <div className="w-full h-full flex relative">
+                  <div
+                    className={`w-3 h-3 ${color}     
+                    rounded-full absolute top-1/2 -translate-y-1/2 left-1/2 -translate-x-1/2 ${
+                      props.selectedAnnotationIdentifiers?.eventID ===
+                      event.eventID
+                        ? "opacity-100"
+                        : "opacity-0"
+                    } opacity-0 group-hover:opacity-100`}
+                  ></div>
+                  {measureAtTimeInRange && (
+                    <div
+                      className={`absolute w-[2px] h-full bg-black ${
+                        props.selectedAnnotationIdentifiers?.eventID ===
+                        event.eventID
+                          ? "opacity-100"
+                          : "opacity-0"
+                      } group-hover:opacity-100`}
+                      style={{
+                        left: `${measureAtTimeOffsetLeftFromEventTime}px`,
+                      }}
+                    ></div>
+                  )}
+                </div>
+              </button>
+              //   </div>
+            );
+          })}
+      </div>
+    );
+  });
+
   // // // // // // // //
   // // // // // // // //
   return (
-    <div className="w-full flex">
+    <div className="w-full flex" id="annotation parent container">
       <div className="">
         <div className="w-24 h-8">
           <button className="border-2 w-6 h-6" onClick={zoomOutHandler}>
@@ -167,23 +338,11 @@ const Annotations = (props) => {
           </button>
         </div>
         <div className="w-24 border-l-[1px] text-sm">
-          <div className="h-8 border-y-[1px] flex gap-2">
-            <p>mouse1</p>
-            <button
-              className="bg-green-300 px-2"
-              id="mouse1"
-              onClick={addTimelineEventHandler}
-            >
-              V
-            </button>
-          </div>
-          <div className="h-8 border-b-[1px]">mouse2</div>
-          <div className="h-8 border-b-[1px]">mouse3</div>
-          <div className="h-8 border-b-[1px]">mouse4</div>
+          {annotationCategoryHeadersJSX}
         </div>
       </div>
       <div className=" grow ">
-        <div className="h-8 ">
+        <div className="h-8" ref={timelineContainerRef}>
           <div className="w-full">
             <div className="flex w-full justify-between">
               {/* <div className="w-[1px] h-3 border-[1px] relative">
@@ -205,11 +364,12 @@ const Annotations = (props) => {
           </div>
           {/* <p className="text-xs text-right">{props.videoTimeInfo}</p> */}
         </div>
-        <div className="border-x-[1px]">
-          <div className="border-y-[1px] h-8"></div>
+        <div className="border-x-[1px]" id="annotations">
+          {/* <div className="border-y-[1px] h-8"></div>
           <div className="border-b-[1px] h-8"></div>
           <div className="border-b-[1px] h-8"></div>
-          <div className="border-b-[1px] h-8"></div>
+          <div className="border-b-[1px] h-8"></div> */}
+          {annotationsJSX}
         </div>
         <Scrollbar
           isDraggingScrollBar={isDraggingScrollBar}

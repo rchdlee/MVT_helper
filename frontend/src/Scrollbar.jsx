@@ -5,12 +5,13 @@ const Scrollbar = (props) => {
   const gridSize = 20;
 
   const [timeoutID, setTimeoutID] = useState(null);
-  const [containerWidth, setContainerWidth] = useState(null);
   const scrollbarContainerRef = useRef();
+
+  const [containerWidth, setContainerWidth] = useState(null);
 
   useEffect(() => {
     setContainerWidth(scrollbarContainerRef?.current?.offsetWidth);
-  });
+  }, []);
 
   // // VARIABLES // //
   //   const containerWidth = scrollbarContainerRef?.current?.offsetWidth;

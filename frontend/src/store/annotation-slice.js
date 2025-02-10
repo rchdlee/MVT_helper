@@ -1,14 +1,55 @@
-import { createSlice } from "@reduxjs/toolkit";
+import { createSlice, current } from "@reduxjs/toolkit";
+// import { v4 as uuidv4 } from "uuid";
 
 const initialState = {
   data: [
     {
-      mouse: "mouse1",
+      categoryName: "mouse1",
       events: [
         {
-          type: "void",
-          event_time_sec: 25,
-          measure_at_time_sec: 200,
+          eventType: "void",
+          eventTimeSec: 25,
+          measureAtTimeSec: 200,
+          eventID: "testid1a",
+        },
+        {
+          eventType: "void",
+          eventTimeSec: 425,
+          measureAtTimeSec: 525,
+          eventID: "testid1b",
+        },
+      ],
+    },
+    {
+      categoryName: "mouse2",
+      events: [
+        {
+          eventType: "void",
+          eventTimeSec: 45,
+          measureAtTimeSec: null,
+          eventID: "testid2",
+        },
+      ],
+    },
+    {
+      categoryName: "mouse3",
+      events: [
+        {
+          eventType: "leak",
+          eventTimeSec: 35,
+          measureAtTimeSec: null,
+          eventID: "testid3",
+        },
+      ],
+    },
+    {
+      categoryName: "mouse4",
+      events: [
+        {
+          eventType: "void",
+          eventTimeSec: 75,
+          measureAtTimeSec: 220,
+          eventID: "testid4",
         },
       ],
     },
@@ -22,10 +63,58 @@ const annotationSlice = createSlice({
     testfunction: (state, action) => {
       console.log("hello from annotation slice redux");
     },
+    setupCategories: (state, action) => {
+      //   const data = action.payload;
+      const inputValues = action.payload;
+
+      for (let i = 0; i < inputValues.length; i++) {
+        const category = {
+          categoryName: inputValues[i],
+          events: [],
+        };
+        state.data.push(category);
+      }
+    },
+    addNewEvent: (state, action) => {
+      const data = action.payload;
+      const categoryName = data.category;
+      const eventType = data.eventType;
+      const eventTime = data.eventTime;
+      const eventID = data.eventID;
+      // const eventID = uuidv4();
+
+      console.log(data);
+
+      state.data
+        .filter((cat) => {
+          return cat.categoryName === categoryName;
+        })[0]
+        .events.push({
+          eventID: eventID,
+          eventType: eventType,
+          eventTimeSec: eventTime,
+          measureAtTimeSec: null,
+        });
+    },
+    setMeasureAtTime: (state, action) => {
+      const data = action.payload;
+      const categoryName = data.category;
+      const eventID = data.eventID;
+      const measureAtTime = data.measureAtTime;
+
+      state.data
+        .filter((cat) => {
+          return cat.categoryName === categoryName;
+        })[0]
+        .events.filter((event) => {
+          return event.eventID === eventID;
+        })[0].measureAtTimeSec = measureAtTime;
+    },
   },
 });
 
-export const { testfunction } = annotationSlice.actions;
+export const { testfunction, setupCategories, addNewEvent, setMeasureAtTime } =
+  annotationSlice.actions;
 
 export default annotationSlice.reducer;
 
