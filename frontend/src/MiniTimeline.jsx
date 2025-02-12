@@ -18,7 +18,7 @@ const MiniTimeline = (props) => {
     <div className="w-full">
       <Slider
         min={0}
-        max={0.999}
+        max={1}
         step={0.001}
         value={props.videoState.playedFrac}
         onMouseDown={mouseDownHandler}

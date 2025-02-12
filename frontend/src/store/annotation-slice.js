@@ -2,6 +2,9 @@ import { createSlice, current } from "@reduxjs/toolkit";
 // import { v4 as uuidv4 } from "uuid";
 
 const initialState = {
+  startTimeIRL: "19:14:18:403",
+  // endTimeIRL: "21:30:21:914",
+  endTimeIRL: "21:30:29:788",
   data: [
     {
       categoryName: "mouse1",
@@ -11,12 +14,16 @@ const initialState = {
           eventTimeSec: 25,
           measureAtTimeSec: 200,
           eventID: "testid1a",
+          location: "RBC",
+          note: "my note",
         },
         {
           eventType: "void",
           eventTimeSec: 425,
           measureAtTimeSec: 525,
           eventID: "testid1b",
+          location: "",
+          note: "",
         },
       ],
     },
@@ -25,34 +32,40 @@ const initialState = {
       events: [
         {
           eventType: "void",
-          eventTimeSec: 45,
-          measureAtTimeSec: null,
+          eventTimeSec: 200,
+          measureAtTimeSec: 425,
           eventID: "testid2",
+          location: "",
+          note: "my note 2",
         },
       ],
     },
-    {
-      categoryName: "mouse3",
-      events: [
-        {
-          eventType: "leak",
-          eventTimeSec: 35,
-          measureAtTimeSec: null,
-          eventID: "testid3",
-        },
-      ],
-    },
-    {
-      categoryName: "mouse4",
-      events: [
-        {
-          eventType: "void",
-          eventTimeSec: 75,
-          measureAtTimeSec: 220,
-          eventID: "testid4",
-        },
-      ],
-    },
+    // {
+    //   categoryName: "mouse3",
+    //   events: [
+    //     {
+    //       eventType: "leak",
+    //       eventTimeSec: 35,
+    //       measureAtTimeSec: null,
+    //       eventID: "testid3",
+    //       location: "",
+    //       note: "",
+    //     },
+    //   ],
+    // },
+    // {
+    //   categoryName: "mouse4",
+    //   events: [
+    //     {
+    //       eventType: "void",
+    //       eventTimeSec: 75,
+    //       measureAtTimeSec: 220,
+    //       eventID: "testid4",
+    //       location: "",
+    //       note: "",
+    //     },
+    //   ],
+    // },
   ],
 };
 
@@ -94,7 +107,21 @@ const annotationSlice = createSlice({
           eventType: eventType,
           eventTimeSec: eventTime,
           measureAtTimeSec: null,
+          location: "",
+          note: "",
         });
+    },
+    setStartTimeIRL: (state, action) => {
+      const startTime = action.payload;
+
+      // needs a check so that the correct format is inputted
+      state.startTimeIRL = startTime;
+    },
+    setEndTimeIRL: (state, action) => {
+      const endTime = action.payload;
+
+      // needs a check so that correct format is inputted
+      state.endTimeIRL = endTime;
     },
     setMeasureAtTime: (state, action) => {
       const data = action.payload;
@@ -110,11 +137,47 @@ const annotationSlice = createSlice({
           return event.eventID === eventID;
         })[0].measureAtTimeSec = measureAtTime;
     },
+    setLocationString: (state, action) => {
+      const data = action.payload;
+      const categoryName = data.category;
+      const eventID = data.eventID;
+      const location = data.location;
+
+      state.data
+        .filter((cat) => {
+          return cat.categoryName === categoryName;
+        })[0]
+        .events.filter((event) => {
+          return event.eventID === eventID;
+        })[0].location = location;
+    },
+    setNoteString: (state, action) => {
+      const data = action.payload;
+      const categoryName = data.category;
+      const eventID = data.eventID;
+      const note = data.note;
+
+      state.data
+        .filter((cat) => {
+          return cat.categoryName === categoryName;
+        })[0]
+        .events.filter((event) => {
+          return event.eventID === eventID;
+        })[0].note = note;
+    },
   },
 });
 
-export const { testfunction, setupCategories, addNewEvent, setMeasureAtTime } =
-  annotationSlice.actions;
+export const {
+  testfunction,
+  setupCategories,
+  addNewEvent,
+  setStartTimeIRL,
+  setEndTimeIRL,
+  setMeasureAtTime,
+  setLocationString,
+  setNoteString,
+} = annotationSlice.actions;
 
 export default annotationSlice.reducer;
 

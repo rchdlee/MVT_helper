@@ -7,7 +7,8 @@ import ReactPlayer from "react-player";
 import MiniTimeline from "./MiniTimeline";
 import Start from "./Start";
 
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
+import { setStartTimeIRL, setEndTimeIRL } from "./store/annotation-slice";
 
 import testVideo from "./assets/video1mp4.mp4";
 
@@ -17,20 +18,26 @@ import {
 } from "./helpers/SecondsTimeFormat";
 import Annotations from "./Annotations";
 import EventInformation from "./EventInformation";
+import End from "./End";
 
 function App() {
   const playerRef = useRef();
 
   // const [videoPath, setVideoPath] = useState(null);
   const [videoPath, setVideoPath] = useState(testVideo);
+  const [videoName, setVideoName] = useState(null);
   const [videoIsLoaded, setVideoIsLoaded] = useState(false);
   // const [isAtStart, setIsAtStart] = useState(true);
   const [isAtStart, setIsAtStart] = useState(false);
+  const [isAtEnd, setIsAtEnd] = useState(false);
 
   const [selectedAnnotationIdentifiers, setSelectedAnnotationIdentifiers] =
     useState(null);
 
-  const reduxState = useSelector((state) => state.annotation.data);
+  const dispatch = useDispatch();
+
+  const reduxState = useSelector((state) => state.annotation);
+  const eventData = useSelector((state) => state.annotation.data);
 
   const [videoState, setVideoState] = useState({
     playing: false,
@@ -45,6 +52,7 @@ function App() {
   const handleFileUpload = (e) => {
     setVideoPath(URL.createObjectURL(e.target.files[0]));
     setVideoIsLoaded(true);
+    setVideoName(e.target.files[0].name);
   };
 
   const togglePlayStateHandler = () => {
@@ -103,31 +111,70 @@ function App() {
     }
   };
 
-  const submitAnnotationsHandler = () => {
-    console.log("submitting to backend", reduxState);
+  const setStartTimeIRLHandler = (e) => {
+    dispatch(setStartTimeIRL(e.target.value));
+  };
+  const setEndTimeIRLHandler = (e) => {
+    dispatch(setEndTimeIRL(e.target.value));
+  };
+
+  const submitAnnotationsHandler = async () => {
+    console.log("submitting to backend", eventData);
     // check if all voids have a measure@ time
 
     let allVoidsHaveData = true;
-    for (let i = 0; i < reduxState.length; i++) {
-      for (let j = 0; j < reduxState[i].events.length; j++) {
+    for (let i = 0; i < eventData.length; i++) {
+      for (let j = 0; j < eventData[i].events.length; j++) {
         // console.log(
         //   "looping through",
-        //   reduxState[i].events,
+        //   eventData[i].events,
         //   "looking at this event:",
-        //   reduxState[i].events[j]
+        //   eventData[i].events[j]
         // );
         if (
-          reduxState[i].events[j].eventType === "void" &&
-          reduxState[i].events[j].measureAtTimeSec === null
+          eventData[i].events[j].eventType === "void" &&
+          eventData[i].events[j].measureAtTimeSec === null
         ) {
-          // console.log(reduxState[i].events[j].eventID, "is not filled");
+          // console.log(eventData[i].events[j].eventID, "is not filled");
           allVoidsHaveData = false;
         }
       }
     }
 
     if (allVoidsHaveData) {
-      console.log("completed.");
+      const timePointArray = [];
+      for (let i = 0; i < eventData.length; i++) {
+        let arr = [];
+        for (let j = 0; j < eventData[i].events.length; j++) {
+          if (eventData[i].events[j].eventType === "void") {
+            arr.push(eventData[i].events[j].measureAtTimeSec);
+          }
+        }
+        timePointArray.push(arr);
+      }
+
+      // console.log("completed.", videoName.split(".")[0], timePointArray);
+      try {
+        const response = await axios.post("http://127.0.0.1:5000/capture", {
+          // video_path: videoPath,
+          // video_path: "/Users/leery/Documents/0xC/VAI4MVT/src/media/CohEF2/CohEF2_ER1a_L10-GFP_F_predtA_7-6-2020.mov" ,
+          // video_path: videoName.split(".")[0],
+          video_path: "C:\\Users\\rlee21\\Documents\\CohEM3\\video1mp4.mp4",
+          // video_path: videoPath,
+          // time_points: timePoints.split(',').map(Number),
+          // time_points: [428, 428.1, 428.2,428.25,428.5,429, 12.4],
+          time_points_arrays: timePointArray,
+          // quadrant: "top-left",
+          // crop_area: cropArea
+        });
+
+        // setScreenshots(response.data.screenshots);
+        // setHasScreenshots(true);
+        console.log("finished", response.data.screenshots);
+        setIsAtEnd(true);
+      } catch (error) {
+        console.error("Error capturing screenshots:", error);
+      }
       return;
     }
     console.log("UNFINISHED");
@@ -145,14 +192,14 @@ function App() {
 
   return (
     <>
-      {isAtStart && (
+      {isAtStart && !isAtEnd && (
         <Start
           handleFileUpload={handleFileUpload}
           videoIsLoaded={videoIsLoaded}
           setIsAtStart={setIsAtStart}
         />
       )}
-      {!isAtStart && (
+      {!isAtStart && !isAtEnd && (
         <div className="flex w-full h-screen gap-2 p-2">
           {/* LEFT SIDE */}
           <div className="flex flex-col justify-start h-full items-end">
@@ -189,11 +236,44 @@ function App() {
           </div>
           {/* RIGHT SIDE */}
           <div className="grow h-full flex flex-col justify-between">
-            {/* <input
-              type="file"
-              onChange={handleFileUpload}
-              className="border-[1px] block"
-            /> */}
+            <div>
+              <div className="bg-green-100">
+                <h3>duration:{videoState.duration}</h3>
+                <h3>playedSec:{videoState.playedSec}</h3>
+                <h3>playedFrac:{videoState.playedFrac}</h3>
+              </div>
+              <div>
+                <label htmlFor="parent_folder_path">Parent Folder path</label>
+                <input
+                  type="text"
+                  id="parent_folder_path"
+                  className="border-[1px]"
+                />
+              </div>
+              <div>
+                <label htmlFor="video_start_time">
+                  Start Time (xx:xx:xx:xx)
+                </label>
+                <input
+                  type="text"
+                  id="video_start_time"
+                  className="border-[1px]"
+                  onBlur={setStartTimeIRLHandler}
+                  defaultValue={reduxState.startTimeIRL}
+                />
+              </div>
+              <div>
+                <label htmlFor="video_end_time">End Time (xx:xx:xx:xx)</label>
+                <input
+                  type="text"
+                  id="video_end_time"
+                  className="border-[1px]"
+                  onBlur={setEndTimeIRLHandler}
+                  defaultValue={reduxState.endTimeIRL}
+                />
+              </div>
+            </div>
+
             <div className="w-full">
               {/* <p>{selectedAnnotationIdentifiers?.eventID}</p> */}
               {/* <p>{selectedAnnotationIdentifiers?.categoryName}</p> */}
@@ -201,6 +281,7 @@ function App() {
                 <EventInformation
                   selectedAnnotationIdentifiers={selectedAnnotationIdentifiers}
                   videoState={videoState}
+                  seekTo={handleSeek}
                 />
               )}
             </div>
@@ -227,6 +308,13 @@ function App() {
             </div>
           </div>
         </div>
+      )}
+      {!isAtStart && isAtEnd && (
+        <End
+          setIsAtEnd={setIsAtEnd}
+          data={reduxState}
+          videoState={videoState}
+        />
       )}
     </>
   );
