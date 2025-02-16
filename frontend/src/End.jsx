@@ -9,74 +9,6 @@ const End = (props) => {
     props.setIsAtEnd(false);
   };
 
-  console.log(props.data, "🐱‍🚀");
-
-  const calculateTimeDifferentialMsec2Decimal = (start_time, end_time) => {
-    const startTimeArray = start_time.split(":");
-    const endTimeArray = end_time.split(":");
-
-    let msec;
-    let sec;
-    let min;
-    let hr;
-
-    // calculate msec
-    if (startTimeArray[3] > endTimeArray[3]) {
-      endTimeArray[2] - 1;
-      msec = endTimeArray[3] + 100 - startTimeArray[3];
-    }
-    if (startTimeArray[3] < endTimeArray[3]) {
-      msec = endTimeArray[3] - startTimeArray[3];
-    }
-    console.log(msec, "🐱‍🚀");
-
-    // calculate sec
-    if (startTimeArray[2] > endTimeArray[2]) {
-      endTimeArray[1] - 1;
-      sec = endTimeArray[2] + 60 - startTimeArray[2];
-    }
-    if (startTimeArray[2] < endTimeArray[2]) {
-      sec = endTimeArray[2] - startTimeArray[2];
-    }
-    console.log(sec, sec.toString().length, "🐱‍🐉");
-
-    // calculate min
-    if (startTimeArray[1] > endTimeArray[1]) {
-      endTimeArray[0] - 1;
-      min = endTimeArray[1] + 60 - startTimeArray[1];
-    }
-    if (startTimeArray[1] < endTimeArray[1]) {
-      min = endTimeArray[1] - startTimeArray[1];
-    }
-    console.log(min, "😜");
-
-    // calculate hr
-    hr = endTimeArray[0] - startTimeArray[0];
-    console.log(hr, "🙌");
-
-    // if only 1 digit, add 0 in front
-    // function^
-    if (msec.toString().length === 1) {
-      msec = "0" + msec;
-    }
-    if (sec.toString().length === 1) {
-      sec = "0" + sec;
-    }
-    if (min.toString().length === 1) {
-      min = "0" + min;
-    }
-    if (hr.toString().length === 1) {
-      hr = "0" + hr;
-    }
-    const actualVideoLengthFormatted = `${hr}:${min}:${sec}:${msec}`;
-    const actualVideoLengthSeconds =
-      +hr * 3600 + +min * 60 + +sec + 0.01 * +msec;
-
-    const timeRatio = actualVideoLengthSeconds / props.videoState.duration;
-    console.log(timeRatio);
-    return timeRatio;
-  };
-
   const addSecondsToActualStartTime = (timeSec) => {
     const startTime = props.data.startTimeIRL;
     const startTimeArray = startTime.split(":");
@@ -118,8 +50,6 @@ const End = (props) => {
     return newTimeFormatted;
   };
 
-  ///////////////////////////
-  // frames approach
   const calculateFrames = (start_time, end_time) => {
     const startTimeArray = start_time.split(":");
     const endTimeArray = end_time.split(":");
@@ -211,11 +141,6 @@ const End = (props) => {
     return newTimeFormatted;
   };
 
-  const timeRatio = calculateTimeDifferentialMsec2Decimal(
-    props.data.startTimeIRL,
-    props.data.endTimeIRL
-  );
-
   const headers = [
     { label: "Mouse", key: "mouse" },
     { label: "Type", key: "type" },
@@ -266,7 +191,7 @@ const End = (props) => {
       <p>end screen</p>
       <button onClick={backButtonHandler}>back</button>
       <div>
-        <CSVLink data={csvData} headers={headers}>
+        <CSVLink data={csvData} headers={headers} filename="test-from-code">
           Download me
         </CSVLink>
       </div>

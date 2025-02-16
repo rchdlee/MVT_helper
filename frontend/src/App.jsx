@@ -8,7 +8,11 @@ import MiniTimeline from "./MiniTimeline";
 import Start from "./Start";
 
 import { useSelector, useDispatch } from "react-redux";
-import { setStartTimeIRL, setEndTimeIRL } from "./store/annotation-slice";
+import {
+  setStartTimeIRL,
+  setEndTimeIRL,
+  editEventTime,
+} from "./store/annotation-slice";
 
 import testVideo from "./assets/video1mp4.mp4";
 
@@ -19,6 +23,7 @@ import {
 import Annotations from "./Annotations";
 import EventInformation from "./EventInformation";
 import End from "./End";
+import UserInputs from "./UserInputs";
 
 function App() {
   const playerRef = useRef();
@@ -236,43 +241,11 @@ function App() {
           </div>
           {/* RIGHT SIDE */}
           <div className="grow h-full flex flex-col justify-between">
-            <div>
-              <div className="bg-green-100">
-                <h3>duration:{videoState.duration}</h3>
-                <h3>playedSec:{videoState.playedSec}</h3>
-                <h3>playedFrac:{videoState.playedFrac}</h3>
-              </div>
-              <div>
-                <label htmlFor="parent_folder_path">Parent Folder path</label>
-                <input
-                  type="text"
-                  id="parent_folder_path"
-                  className="border-[1px]"
-                />
-              </div>
-              <div>
-                <label htmlFor="video_start_time">
-                  Start Time (xx:xx:xx:xx)
-                </label>
-                <input
-                  type="text"
-                  id="video_start_time"
-                  className="border-[1px]"
-                  onBlur={setStartTimeIRLHandler}
-                  defaultValue={reduxState.startTimeIRL}
-                />
-              </div>
-              <div>
-                <label htmlFor="video_end_time">End Time (xx:xx:xx:xx)</label>
-                <input
-                  type="text"
-                  id="video_end_time"
-                  className="border-[1px]"
-                  onBlur={setEndTimeIRLHandler}
-                  defaultValue={reduxState.endTimeIRL}
-                />
-              </div>
-            </div>
+            <UserInputs
+              videoState={videoState}
+              handleSeek={handleSeek}
+              reduxState={reduxState}
+            />
 
             <div className="w-full">
               {/* <p>{selectedAnnotationIdentifiers?.eventID}</p> */}
@@ -280,6 +253,9 @@ function App() {
               {selectedAnnotationIdentifiers && (
                 <EventInformation
                   selectedAnnotationIdentifiers={selectedAnnotationIdentifiers}
+                  setSelectedAnnotationIdentifiers={
+                    setSelectedAnnotationIdentifiers
+                  }
                   videoState={videoState}
                   seekTo={handleSeek}
                 />

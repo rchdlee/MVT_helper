@@ -165,6 +165,44 @@ const annotationSlice = createSlice({
           return event.eventID === eventID;
         })[0].note = note;
     },
+    editEventTime: (state, action) => {
+      const data = action.payload;
+      const categoryName = data.category;
+      const eventID = data.eventID;
+      const newTime = data.newTime;
+
+      state.data
+        .filter((cat) => {
+          return cat.categoryName === categoryName;
+        })[0]
+        .events.filter((event) => {
+          return event.eventID === eventID;
+        })[0].eventTimeSec = newTime;
+    },
+    deleteEvent: (state, action) => {
+      const data = action.payload;
+      const categoryName = data.category;
+      const eventID = data.eventID;
+
+      const event = state.data
+        .filter((cat) => {
+          return cat.categoryName === categoryName;
+        })[0]
+        .events.find((event) => event.eventID === eventID);
+
+      const eventIndex = state.data
+        .filter((cat) => {
+          return cat.categoryName === categoryName;
+        })[0]
+        .events.indexOf(event);
+
+      state.data
+        .filter((cat) => {
+          return cat.categoryName === categoryName;
+        })[0]
+        .events.splice(eventIndex, 1);
+      console.log(eventIndex, "🦥");
+    },
   },
 });
 
@@ -177,6 +215,8 @@ export const {
   setMeasureAtTime,
   setLocationString,
   setNoteString,
+  editEventTime,
+  deleteEvent,
 } = annotationSlice.actions;
 
 export default annotationSlice.reducer;

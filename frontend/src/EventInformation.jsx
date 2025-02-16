@@ -3,6 +3,8 @@ import {
   setMeasureAtTime,
   setLocationString,
   setNoteString,
+  deleteEvent,
+  editEventTime,
 } from "./store/annotation-slice";
 import {
   secondsToMinAndSec,
@@ -16,11 +18,11 @@ const EventInformation = (props) => {
   const eventInformation = reduxState
     .filter((cat) => {
       return (
-        cat.categoryName === props.selectedAnnotationIdentifiers?.categoryName
+        cat.categoryName === props.selectedAnnotationIdentifiers.categoryName
       );
     })[0]
     .events.filter((event) => {
-      return event.eventID === props.selectedAnnotationIdentifiers?.eventID;
+      return event.eventID === props.selectedAnnotationIdentifiers.eventID;
     })[0];
   console.log(reduxState, eventInformation, "😜");
 
@@ -78,37 +80,72 @@ const EventInformation = (props) => {
     // console.log(timeFormattedArray, timeSec);
   };
 
+  const editEventTimeHandler = () => {
+    // console.log("editing event time to:", props.videoState.playedSec);
+    dispatch(
+      editEventTime({
+        category: props.selectedAnnotationIdentifiers.categoryName,
+        eventID: props.selectedAnnotationIdentifiers.eventID,
+        newTime: props.videoState.playedSec,
+      })
+    );
+  };
+
+  const deleteEventHandler = () => {
+    console.log("deleting event");
+    props.setSelectedAnnotationIdentifiers(null);
+    dispatch(
+      deleteEvent({
+        category: props.selectedAnnotationIdentifiers.categoryName,
+        eventID: eventInformation?.eventID,
+      })
+    );
+  };
+
   return (
-    <div>
-      <p>event type: {eventInformation.eventType}</p>
-      <p>time: {secondsToMinAndSecDecimal(eventInformation.eventTimeSec)}</p>
+    <div className="bg-blue-100">
+      <button className="border-2" onClick={deleteEventHandler}>
+        DEL
+      </button>
+      <p>event type: {eventInformation?.eventType}</p>
       <div className="flex">
-        {eventInformation.measureAtTimeSec ? (
-          <div className="flex gap-2">
-            <p>measure at: </p>
-            <p className="underline cursor-pointer" onClick={seekToTimeHandler}>
-              {secondsToMinAndSecDecimal(eventInformation.measureAtTimeSec)}
-            </p>
-          </div>
-        ) : (
-          <div>
-            <p>still needs measure at time</p>
-          </div>
-        )}
-        <button
-          className="border-2"
-          onClick={setMeasureAtTimeHandler}
-          // id={`${props.selectedAnnotationIdentifiers.categoryName}_${props.selectedAnnotationIdentifiers.eventID}`}
-        >
-          SET MEASURE TIME
+        <p>time: {secondsToMinAndSecDecimal(eventInformation?.eventTimeSec)}</p>
+        <button className="border-2" onClick={editEventTimeHandler}>
+          SET TIME
         </button>
       </div>
+      {eventInformation?.eventType === "void" && (
+        <div className="flex">
+          {eventInformation?.measureAtTimeSec ? (
+            <div className="flex gap-2">
+              <p>measure at: </p>
+              <p
+                className="underline cursor-pointer"
+                onClick={seekToTimeHandler}
+              >
+                {secondsToMinAndSecDecimal(eventInformation?.measureAtTimeSec)}
+              </p>
+            </div>
+          ) : (
+            <div>
+              <p>still needs measure at time</p>
+            </div>
+          )}
+          <button
+            className="border-2"
+            onClick={setMeasureAtTimeHandler}
+            // id={`${props.selectedAnnotationIdentifiers.categoryName}_${props.selectedAnnotationIdentifiers.eventID}`}
+          >
+            SET MEASURE TIME
+          </button>
+        </div>
+      )}
       <div>
         <label htmlFor="location">Location</label>
         <input
           type="text"
           id="location"
-          defaultValue={eventInformation.location}
+          defaultValue={eventInformation?.location}
           onBlur={setLocationHandler}
           className="border-[1px]"
         />
@@ -118,7 +155,7 @@ const EventInformation = (props) => {
         <input
           type="text"
           id="notes"
-          defaultValue={eventInformation.notes}
+          defaultValue={eventInformation?.notes}
           onBlur={setNoteHandler}
           className="border-[1px]"
         />
