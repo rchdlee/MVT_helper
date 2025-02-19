@@ -3,8 +3,11 @@ import {
   secondsToMinAndSec,
   secondsToMinAndSecDecimal,
 } from "./helpers/SecondsTimeFormat";
+import EventSummary from "./EventSummary";
 
 const End = (props) => {
+  //   const fileName = props.videoName.split(".")[0] + "_eventdata";
+
   const backButtonHandler = () => {
     props.setIsAtEnd(false);
   };
@@ -45,97 +48,57 @@ const End = (props) => {
       newHr = "0" + newHr;
     }
 
-    const newTimeFormatted = `${newHr}:${newMin}:${newSec}:${newMsec}`;
-    // console.log(startTime, startTimeInSec, timeSec, newTimeFormatted);
+    // const newTimeFormatted = `${newHr}:${newMin}:${newSec}:${newMsec}`;
+    const newTimeFormatted = `${newHr}:${newMin}:${newSec}`;
     return newTimeFormatted;
   };
 
-  const calculateFrames = (start_time, end_time) => {
-    const startTimeArray = start_time.split(":");
-    const endTimeArray = end_time.split(":");
+  const calculateFrameNumber = (start_time, end_time) => {
+    const startArr = start_time.split(":");
+    const endArr = end_time.split(":");
 
-    let msec;
-    let sec;
-    let min;
-    let hr;
-
-    // calculate msec
-    if (startTimeArray[3] > endTimeArray[3]) {
-      endTimeArray[2] - 1;
-      msec = endTimeArray[3] + 100 - startTimeArray[3];
-    }
-    if (startTimeArray[3] < endTimeArray[3]) {
-      msec = endTimeArray[3] - startTimeArray[3];
-    }
-    console.log(msec, "🐱‍🚀");
-
-    // calculate sec
-    if (startTimeArray[2] > endTimeArray[2]) {
-      endTimeArray[1] - 1;
-      sec = endTimeArray[2] + 60 - startTimeArray[2];
-    }
-    if (startTimeArray[2] < endTimeArray[2]) {
-      sec = endTimeArray[2] - startTimeArray[2];
-    }
-    console.log(sec, sec.toString().length, "🐱‍🐉");
-
-    // calculate min
-    if (startTimeArray[1] > endTimeArray[1]) {
-      endTimeArray[0] - 1;
-      min = endTimeArray[1] + 60 - startTimeArray[1];
-    }
-    if (startTimeArray[1] < endTimeArray[1]) {
-      min = endTimeArray[1] - startTimeArray[1];
-    }
-    console.log(min, "😜");
-
-    // calculate hr
-    hr = endTimeArray[0] - startTimeArray[0];
-    console.log(hr, "🙌");
-
-    // if only 1 digit, add 0 in front
-    // function^
-    if (msec.toString().length === 1) {
-      msec = "0" + msec;
-    }
-    if (sec.toString().length === 1) {
-      sec = "0" + sec;
-    }
-    if (min.toString().length === 1) {
-      min = "0" + min;
-    }
-    if (hr.toString().length === 1) {
-      hr = "0" + hr;
-    }
-    const actualVideoLengthFormatted = `${hr}:${min}:${sec}:${msec}`;
-    const actualVideoLengthSeconds =
-      +hr * 3600 + +min * 60 + +sec + 0.01 * +msec;
-
-    const numberFrames = actualVideoLengthSeconds / (2 / 3);
-    // const numberFrames = actualVideoLengthSeconds * (3 / 2);
-    console.log(
-      "start",
-      props.data.startTimeIRL,
-      "end",
-      props.data.endTimeIRL,
-      actualVideoLengthFormatted,
-      actualVideoLengthSeconds,
-      numberFrames,
-      "🦥"
+    const startTime = new Date(
+      `2025-01-01T${startArr[0]}:${startArr[1]}:${startArr[2]}.${startArr[3]}`
     );
+
+    const endTime = new Date(
+      `2025-01-01T${endArr[0]}:${endArr[1]}:${endArr[2]}.${endArr[3]}`
+    );
+
+    const secDif = (endTime - startTime) / 1000;
+    const numberFrames = secDif / (2 / 3);
     return numberFrames;
   };
-
-  const numberFrames = calculateFrames(
+  const numberFrames = calculateFrameNumber(
     props.data.startTimeIRL,
     props.data.endTimeIRL
   );
+
   const calculateVideoClockTime = (timeSec) => {
     const recordingDuration = props.videoState.duration;
     const timeFrac = +timeSec / +recordingDuration;
 
     const frameNumber = Math.round(timeFrac * numberFrames);
     const timeToAddSec = frameNumber * (2 / 3);
+
+    // console.log(
+    //   "adding",
+    //   timeToAddSec,
+    //   "seconds to the start time of:",
+    //   props.data.startTimeIRL,
+    //   "end time is:",
+    //   props.data.endTimeIRL,
+    //   "duration is",
+    //   recordingDuration,
+    //   "timesec is",
+    //   timeSec,
+    //   "timefrac is",
+    //   timeFrac,
+    //   "number of frames in the acutal video:",
+    //   numberFrames,
+    //   "frameNumber:",
+    //   frameNumber
+    // );
 
     const newTimeFormatted = addSecondsToActualStartTime(timeToAddSec);
     return newTimeFormatted;
@@ -146,10 +109,10 @@ const End = (props) => {
     { label: "Type", key: "type" },
     { label: "Location", key: "location" },
     { label: "Note", key: "note" },
-    { label: "Video Event Time (s)", key: "video_event_time" },
-    { label: "Video Measure Time (s)", key: "video_measure_time" },
     { label: "Actual Event Time (s)", key: "actual_event_time" },
     { label: "Actual Measure Time (s)", key: "actual_measure_time" },
+    { label: "Video Event Time (s)", key: "video_event_time" },
+    { label: "Video Measure Time (s)", key: "video_measure_time" },
   ];
 
   const csvData = [];
@@ -162,37 +125,44 @@ const End = (props) => {
         type: event.eventType,
         location: event.location,
         note: event.note,
-        video_event_time: event.eventTimeSec,
-        // video_event_time: secondsToMinAndSecDecimal(event.eventTimeSec),
-        video_measure_time: event.measureAtTimeSec,
-        // video_measure_time: secondsToMinAndSecDecimal(event.measureAtTimeSec),
-        // actual_event_time: addSecondsToActualStartTime(
-        //   (event.eventTimeSec * timeRatio).toFixed(2)
-        // ),
         actual_event_time: calculateVideoClockTime(event.eventTimeSec),
-        // actual_measure_time:
-        //   event.eventType === "void"
-        //     ? addSecondsToActualStartTime(
-        //         (event.measureAtTimeSec * timeRatio).toFixed(2)
-        //       )
-        //     : "",
         actual_measure_time:
           event.eventType === "void"
             ? calculateVideoClockTime(event.measureAtTimeSec)
             : "",
+        video_event_time: event.eventTimeSec,
+        video_measure_time: event.measureAtTimeSec,
       });
     });
   });
 
-  console.log(csvData, "👏");
+  console.log(props.data.data, csvData, "👏");
 
   return (
-    <div>
-      <p>end screen</p>
-      <button onClick={backButtonHandler}>back</button>
+    <div className="flex flex-col justify-between">
       <div>
-        <CSVLink data={csvData} headers={headers} filename="test-from-code">
-          Download me
+        <button
+          onClick={backButtonHandler}
+          className="flex gap-1 items-end group"
+        >
+          <p>👈</p>
+          <p className="group-hover:underline">Back to Timeline</p>
+        </button>
+        <EventSummary
+          eventData={props.data.data}
+          calculateVideoClockTime={calculateVideoClockTime}
+          seekTo={props.seekTo}
+        />
+      </div>
+      <div className="group">
+        <CSVLink
+          data={csvData}
+          headers={headers}
+          //   filename={fileName}
+          className="flex gap-1"
+        >
+          <p className="group-hover:underline">Download CSV</p>
+          <p>⬇</p>
         </CSVLink>
       </div>
     </div>

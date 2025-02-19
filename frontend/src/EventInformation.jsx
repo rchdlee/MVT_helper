@@ -24,7 +24,12 @@ const EventInformation = (props) => {
     .events.filter((event) => {
       return event.eventID === props.selectedAnnotationIdentifiers.eventID;
     })[0];
-  console.log(reduxState, eventInformation, "😜");
+  // console.log(
+  //   reduxState,
+  //   eventInformation,
+  //   props.selectedAnnotationIdentifiers,
+  //   "😜"
+  // );
 
   const setMeasureAtTimeHandler = (e) => {
     // const eventInformationIdentifiers = e.target.id;
@@ -79,6 +84,12 @@ const EventInformation = (props) => {
 
     // console.log(timeFormattedArray, timeSec);
   };
+  const seekToEventTimeHandler = () => {
+    props.seekTo(eventInformation?.eventTimeSec);
+  };
+  const seekToMeasureAtTimeHandler = () => {
+    props.seekTo(eventInformation?.measureAtTimeSec);
+  };
 
   const editEventTimeHandler = () => {
     // console.log("editing event time to:", props.videoState.playedSec);
@@ -103,63 +114,164 @@ const EventInformation = (props) => {
   };
 
   return (
-    <div className="bg-blue-100">
-      <button className="border-2" onClick={deleteEventHandler}>
-        DEL
-      </button>
-      <p>event type: {eventInformation?.eventType}</p>
-      <div className="flex">
-        <p>time: {secondsToMinAndSecDecimal(eventInformation?.eventTimeSec)}</p>
-        <button className="border-2" onClick={editEventTimeHandler}>
-          SET TIME
-        </button>
-      </div>
-      {eventInformation?.eventType === "void" && (
-        <div className="flex">
-          {eventInformation?.measureAtTimeSec ? (
-            <div className="flex gap-2">
-              <p>measure at: </p>
-              <p
-                className="underline cursor-pointer"
-                onClick={seekToTimeHandler}
-              >
-                {secondsToMinAndSecDecimal(eventInformation?.measureAtTimeSec)}
-              </p>
-            </div>
-          ) : (
-            <div>
-              <p>still needs measure at time</p>
-            </div>
-          )}
+    <div className="bg-green-100 p-2 text-sm flex gap-2 justify-between items-start">
+      <div className="">
+        {/* MOUSE ID */}
+        <div className="mb-1">
+          <p>Mouse ID: {props.selectedAnnotationIdentifiers.categoryName}</p>
+        </div>
+        {/* EVENT TYPE */}
+        <div className="flex gap-2 mb-1">
+          <p>Event Type: {eventInformation?.eventType.toUpperCase()}</p>
           <button
-            className="border-2"
-            onClick={setMeasureAtTimeHandler}
-            // id={`${props.selectedAnnotationIdentifiers.categoryName}_${props.selectedAnnotationIdentifiers.eventID}`}
+            className="group flex items-center gap-1"
+            // onClick={deleteEventHandler}
           >
-            SET MEASURE TIME
+            <p>🔄</p>
+            {/* <p className="group-hover:underline text-sm">SWITCH EVENT TYPE</p> */}
           </button>
         </div>
-      )}
-      <div>
-        <label htmlFor="location">Location</label>
-        <input
-          type="text"
-          id="location"
-          defaultValue={eventInformation?.location}
-          onBlur={setLocationHandler}
-          className="border-[1px]"
-        />
+        {/* EVENT TIME */}
+        <div className="flex items-center gap-2 mb-1">
+          <div
+            className="flex gap-2 cursor-pointer group"
+            onClick={seekToEventTimeHandler}
+          >
+            <p className="">Event Time ⏱ :</p>
+            <p
+              className="cursor-pointer group-hover:underline"
+              // onClick={seekToTimeHandler}
+            >
+              {secondsToMinAndSecDecimal(eventInformation?.eventTimeSec)}
+            </p>
+          </div>
+          <div>|</div>
+
+          <button
+            className="flex gap-1 items-start group"
+            onClick={editEventTimeHandler}
+          >
+            <p>🖋</p>
+            <p className="opacity-0 group-hover:opacity-100 text-[10px]">
+              Set New Event Time
+            </p>
+          </button>
+        </div>
+        {/* MEASURE AT TIME */}
+        {eventInformation?.eventType === "void" && (
+          <div>
+            {eventInformation?.measureAtTimeSec ? (
+              <div className="flex items-center gap-2 mb-1">
+                <div
+                  className="flex gap-2 cursor-pointer group"
+                  onClick={seekToMeasureAtTimeHandler}
+                >
+                  <p>Measure Time 📏 : </p>
+                  <p
+                    className="group-hover:underline cursor-pointer"
+                    // onClick={seekToTimeHandler}
+                  >
+                    {secondsToMinAndSecDecimal(
+                      eventInformation?.measureAtTimeSec
+                    )}
+                  </p>
+                </div>
+                <div>|</div>
+
+                <button
+                  className="flex gap-1 items-start group"
+                  onClick={setMeasureAtTimeHandler}
+                >
+                  <p>🖋</p>
+                  <p className="opacity-0 group-hover:opacity-100 text-[10px]">
+                    Set New Measure Time
+                  </p>
+                </button>
+              </div>
+            ) : (
+              <div
+                className="flex gap-2 cursor-pointer group"
+                onClick={setMeasureAtTimeHandler}
+              >
+                <p>Measure Time 📏 : </p>
+                <button className="flex group gap-1">
+                  <p className="group-hover:underline">SET MEASURE TIME</p>
+                  <p>📍</p>
+                </button>
+              </div>
+            )}
+          </div>
+        )}
+        <button
+          className="group flex items-center gap-1 mt-4"
+          onClick={deleteEventHandler}
+        >
+          <p className="text-red-500 group-hover:underline font-semibold text-sm">
+            DELETE EVENT
+          </p>
+          <p>❌</p>
+        </button>
       </div>
-      <div>
-        <label htmlFor="location">Notes</label>
-        <input
-          type="text"
-          id="notes"
-          defaultValue={eventInformation?.notes}
-          onBlur={setNoteHandler}
-          className="border-[1px]"
-        />
+      <div className="grow">
+        <div className="flex flex-col">
+          <label htmlFor="location">Location</label>
+          <input
+            type="text"
+            id="location"
+            value={eventInformation.location}
+            // defaultValue={eventInformation.location}
+            onChange={setLocationHandler}
+            // onBlur={setLocationHandler}
+            className="border-[1px]"
+          />
+        </div>
+        <div className="flex flex-col">
+          <label htmlFor="location">Notes</label>
+          <textarea
+            // type="text"
+            id="notes"
+            value={eventInformation.note}
+            // defaultValue={eventInformation.note}
+            onChange={setNoteHandler}
+            // onBlur={setNoteHandler}
+            className="border-[1px]"
+          />
+        </div>
       </div>
+      {/* <div className="flex flex-col items-end">
+        <button
+          className="group flex items-center gap-1"
+          onClick={deleteEventHandler}
+        >
+          <p className="text-red-500 group-hover:underline font-semibold text-sm">
+            DELETE EVENT
+          </p>
+          <p>❌</p>
+        </button>
+        <button
+          className="group flex items-center gap-1"
+          onClick={deleteEventHandler}
+        >
+          <p className="group-hover:underline text-sm">SWITCH EVENT TYPE</p>
+          <p>🔄</p>
+        </button>
+        <button
+          className="group flex gap-1"
+          onClick={editEventTimeHandler}
+          // id={`${props.selectedAnnotationIdentifiers.categoryName}_${props.selectedAnnotationIdentifiers.eventID}`}
+        >
+          <p className="group-hover:underline">SET EVENT TIME</p>
+          <p>🖋</p>
+        </button>
+        <button
+          className="flex group gap-1"
+          onClick={setMeasureAtTimeHandler}
+          // id={`${props.selectedAnnotationIdentifiers.categoryName}_${props.selectedAnnotationIdentifiers.eventID}`}
+        >
+          <p className="group-hover:underline">SET MEASURE TIME</p>
+          <p>🖋</p>
+        </button>
+      </div> */}
     </div>
   );
 };

@@ -24,16 +24,24 @@ import Annotations from "./Annotations";
 import EventInformation from "./EventInformation";
 import End from "./End";
 import UserInputs from "./UserInputs";
+import LoadSpinner from "./UI/LoadSpinner";
 
 function App() {
   const playerRef = useRef();
 
+  // //
   // const [videoPath, setVideoPath] = useState(null);
   const [videoPath, setVideoPath] = useState(testVideo);
+  // //
   const [videoName, setVideoName] = useState(null);
   const [videoIsLoaded, setVideoIsLoaded] = useState(false);
+  const [fullPath, setFullPath] = useState(null);
+  // //
   // const [isAtStart, setIsAtStart] = useState(true);
   const [isAtStart, setIsAtStart] = useState(false);
+  // //
+
+  const [backendIsWorking, setBackendIsWorking] = useState(false);
   const [isAtEnd, setIsAtEnd] = useState(false);
 
   const [selectedAnnotationIdentifiers, setSelectedAnnotationIdentifiers] =
@@ -125,6 +133,7 @@ function App() {
 
   const submitAnnotationsHandler = async () => {
     console.log("submitting to backend", eventData);
+    setBackendIsWorking(true);
     // check if all voids have a measure@ time
 
     let allVoidsHaveData = true;
@@ -158,14 +167,15 @@ function App() {
         timePointArray.push(arr);
       }
 
+      console.log(fullPath, timePointArray, "🚄");
+
       // console.log("completed.", videoName.split(".")[0], timePointArray);
       try {
         const response = await axios.post("http://127.0.0.1:5000/capture", {
-          // video_path: videoPath,
           // video_path: "/Users/leery/Documents/0xC/VAI4MVT/src/media/CohEF2/CohEF2_ER1a_L10-GFP_F_predtA_7-6-2020.mov" ,
           // video_path: videoName.split(".")[0],
-          video_path: "C:\\Users\\rlee21\\Documents\\CohEM3\\video1mp4.mp4",
-          // video_path: videoPath,
+          // video_path: "C:\\Users\\rlee21\\Documents\\CohEM3\\video1mp4.mp4",
+          video_path: fullPath,
           // time_points: timePoints.split(',').map(Number),
           // time_points: [428, 428.1, 428.2,428.25,428.5,429, 12.4],
           time_points_arrays: timePointArray,
@@ -176,6 +186,7 @@ function App() {
         // setScreenshots(response.data.screenshots);
         // setHasScreenshots(true);
         console.log("finished", response.data.screenshots);
+        setBackendIsWorking(false);
         setIsAtEnd(true);
       } catch (error) {
         console.error("Error capturing screenshots:", error);
@@ -197,17 +208,20 @@ function App() {
 
   return (
     <>
-      {isAtStart && !isAtEnd && (
+      {/* {isAtStart && !isAtEnd && ( */}
+      {isAtStart && (
         <Start
           handleFileUpload={handleFileUpload}
           videoIsLoaded={videoIsLoaded}
           setIsAtStart={setIsAtStart}
         />
       )}
-      {!isAtStart && !isAtEnd && (
+      {/* {!isAtStart && !isAtEnd && ( */}
+      {!isAtStart && (
         <div className="flex w-full h-screen gap-2 p-2">
           {/* LEFT SIDE */}
-          <div className="flex flex-col justify-start h-full items-end">
+          <div className="flex flex-col justify-start h-full items-start">
+            <p className="text-xs">{videoName}</p>
             <ReactPlayer
               ref={playerRef}
               url={videoPath}
@@ -240,58 +254,80 @@ function App() {
             </div>
           </div>
           {/* RIGHT SIDE */}
-          <div className="grow h-full flex flex-col justify-between">
-            <UserInputs
-              videoState={videoState}
-              handleSeek={handleSeek}
-              reduxState={reduxState}
-            />
+          {!isAtEnd && (
+            <div className="grow h-full flex flex-col justify-between">
+              <div>
+                <UserInputs
+                  videoState={videoState}
+                  handleSeek={handleSeek}
+                  reduxState={reduxState}
+                  setFullPath={setFullPath}
+                />
 
-            <div className="w-full">
-              {/* <p>{selectedAnnotationIdentifiers?.eventID}</p> */}
-              {/* <p>{selectedAnnotationIdentifiers?.categoryName}</p> */}
-              {selectedAnnotationIdentifiers && (
-                <EventInformation
+                <div className="w-full">
+                  {selectedAnnotationIdentifiers && (
+                    <EventInformation
+                      selectedAnnotationIdentifiers={
+                        selectedAnnotationIdentifiers
+                      }
+                      setSelectedAnnotationIdentifiers={
+                        setSelectedAnnotationIdentifiers
+                      }
+                      videoState={videoState}
+                      seekTo={handleSeek}
+                    />
+                  )}
+                </div>
+              </div>
+
+              <div>
+                <Annotations
+                  videoTimeInfo={videoTimeInfo}
+                  videoState={videoState}
+                  onMouseDown={handleMouseDown}
+                  onMouseUp={handleMouseUp}
+                  onSliderChange={updatePlayedFrac}
+                  seekTo={handleSeek}
                   selectedAnnotationIdentifiers={selectedAnnotationIdentifiers}
                   setSelectedAnnotationIdentifiers={
                     setSelectedAnnotationIdentifiers
                   }
-                  videoState={videoState}
-                  seekTo={handleSeek}
                 />
-              )}
+                <div className="w-full flex justify-end">
+                  {backendIsWorking ? (
+                    <div className="w-32 flex justify-center">
+                      <LoadSpinner />
+                    </div>
+                  ) : (
+                    <button
+                      className="bg-purple-300"
+                      onClick={submitAnnotationsHandler}
+                    >
+                      submit annotations
+                    </button>
+                  )}
+                </div>
+              </div>
             </div>
-
-            <div>
-              <Annotations
-                videoTimeInfo={videoTimeInfo}
-                videoState={videoState}
-                onMouseDown={handleMouseDown}
-                onMouseUp={handleMouseUp}
-                onSliderChange={updatePlayedFrac}
-                seekTo={handleSeek}
-                selectedAnnotationIdentifiers={selectedAnnotationIdentifiers}
-                setSelectedAnnotationIdentifiers={
-                  setSelectedAnnotationIdentifiers
-                }
-              />
-              <button
-                className="bg-purple-300"
-                onClick={submitAnnotationsHandler}
-              >
-                submit annotations
-              </button>
-            </div>
-          </div>
+          )}
+          {isAtEnd && (
+            <End
+              setIsAtEnd={setIsAtEnd}
+              data={reduxState}
+              videoState={videoState}
+              videoName={videoName}
+              seekTo={handleSeek}
+            />
+          )}
         </div>
       )}
-      {!isAtStart && isAtEnd && (
+      {/* {!isAtStart && isAtEnd && (
         <End
           setIsAtEnd={setIsAtEnd}
           data={reduxState}
           videoState={videoState}
         />
-      )}
+      )} */}
     </>
   );
 }

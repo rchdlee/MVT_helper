@@ -4,7 +4,7 @@ import Slider from "rc-slider";
 import { v4 as uuidv4 } from "uuid";
 
 import { useSelector, useDispatch } from "react-redux";
-import { testfunction, addNewEvent } from "./store/annotation-slice";
+import { addNewEvent } from "./store/annotation-slice";
 
 import {
   secondsToMinAndSec,
@@ -156,10 +156,12 @@ const Annotations = (props) => {
   };
 
   const annotationClickHandler = (e) => {
-    console.log("clicked annotation id", e.target.closest("button").id);
+    console.log("clicked annotation id", e.target.closest("button").id, "🚕");
     const annotationInformation = e.target.closest("button").id.split("_");
     const categoryName = annotationInformation[0];
     const eventID = annotationInformation[1];
+    // // setting to null first because 'note' and 'location' inputs are not resetting to defaultValue. need to fix
+    // props.setSelectedAnnotationIdentifiers(null);
     props.setSelectedAnnotationIdentifiers({
       categoryName: categoryName,
       eventID: eventID,

@@ -2,8 +2,10 @@ import { createSlice, current } from "@reduxjs/toolkit";
 // import { v4 as uuidv4 } from "uuid";
 
 const initialState = {
+  // startTimeIRL: null,
+  // endTimeIRL: null,
+  // data: [],
   startTimeIRL: "19:14:18:403",
-  // endTimeIRL: "21:30:21:914",
   endTimeIRL: "21:30:29:788",
   data: [
     {
@@ -40,32 +42,32 @@ const initialState = {
         },
       ],
     },
-    // {
-    //   categoryName: "mouse3",
-    //   events: [
-    //     {
-    //       eventType: "leak",
-    //       eventTimeSec: 35,
-    //       measureAtTimeSec: null,
-    //       eventID: "testid3",
-    //       location: "",
-    //       note: "",
-    //     },
-    //   ],
-    // },
-    // {
-    //   categoryName: "mouse4",
-    //   events: [
-    //     {
-    //       eventType: "void",
-    //       eventTimeSec: 75,
-    //       measureAtTimeSec: 220,
-    //       eventID: "testid4",
-    //       location: "",
-    //       note: "",
-    //     },
-    //   ],
-    // },
+    {
+      categoryName: "mouse3",
+      events: [
+        {
+          eventType: "leak",
+          eventTimeSec: 35,
+          measureAtTimeSec: null,
+          eventID: "testid3",
+          location: "",
+          note: "",
+        },
+      ],
+    },
+    {
+      categoryName: "mouse4",
+      events: [
+        {
+          eventType: "void",
+          eventTimeSec: 75,
+          measureAtTimeSec: 220,
+          eventID: "testid4",
+          location: "",
+          note: "",
+        },
+      ],
+    },
   ],
 };
 
@@ -73,9 +75,6 @@ const annotationSlice = createSlice({
   name: "annotation",
   initialState,
   reducers: {
-    testfunction: (state, action) => {
-      console.log("hello from annotation slice redux");
-    },
     setupCategories: (state, action) => {
       //   const data = action.payload;
       const inputValues = action.payload;
@@ -207,7 +206,6 @@ const annotationSlice = createSlice({
 });
 
 export const {
-  testfunction,
   setupCategories,
   addNewEvent,
   setStartTimeIRL,
