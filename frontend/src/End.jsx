@@ -6,7 +6,7 @@ import {
 import EventSummary from "./EventSummary";
 
 const End = (props) => {
-  //   const fileName = props.videoName.split(".")[0] + "_eventdata";
+  const fileName = props.videoName.split(".")[0] + "_eventdata";
 
   const backButtonHandler = () => {
     props.setIsAtEnd(false);
@@ -158,7 +158,7 @@ const End = (props) => {
         <CSVLink
           data={csvData}
           headers={headers}
-          //   filename={fileName}
+          filename={fileName}
           className="flex gap-1"
         >
           <p className="group-hover:underline">Download CSV</p>

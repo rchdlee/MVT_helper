@@ -30,15 +30,15 @@ function App() {
   const playerRef = useRef();
 
   // //
-  // const [videoPath, setVideoPath] = useState(null);
-  const [videoPath, setVideoPath] = useState(testVideo);
+  const [videoPath, setVideoPath] = useState(null);
+  // const [videoPath, setVideoPath] = useState(testVideo);
   // //
   const [videoName, setVideoName] = useState(null);
   const [videoIsLoaded, setVideoIsLoaded] = useState(false);
   const [fullPath, setFullPath] = useState(null);
   // //
-  // const [isAtStart, setIsAtStart] = useState(true);
-  const [isAtStart, setIsAtStart] = useState(false);
+  const [isAtStart, setIsAtStart] = useState(true);
+  // const [isAtStart, setIsAtStart] = useState(false);
   // //
 
   const [backendIsWorking, setBackendIsWorking] = useState(false);
