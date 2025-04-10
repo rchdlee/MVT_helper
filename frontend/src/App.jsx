@@ -44,6 +44,10 @@ function App() {
   const [backendIsWorking, setBackendIsWorking] = useState(false);
   const [isAtEnd, setIsAtEnd] = useState(false);
 
+  const [shortcutsAreOn, setShortCutsAreOn] = useState(false);
+
+  const [zoom, setZoom] = useState(1);
+
   const [selectedAnnotationIdentifiers, setSelectedAnnotationIdentifiers] =
     useState(null);
 
@@ -77,7 +81,7 @@ function App() {
   };
 
   const handleSeek = (newTime) => {
-    playerRef.current.seekTo(newTime);
+    playerRef.current.seekTo(newTime, "seconds");
   };
 
   const handleVideoReady = () => {
@@ -198,7 +202,72 @@ function App() {
   };
 
   // seek on scroll or arrow click
+  const [shiftKeyDown, setShiftKeyDown] = useState(false);
+  const shortcutFunctionKeyDown = (e) => {
+    // console.log(e);
+    if (e.code === "ShiftLeft") {
+      setShiftKeyDown(true);
+    }
+    if (e.code === "CapsLock") {
+      // console.log(e.code);
+      setShortCutsAreOn((prevState) => {
+        return !prevState;
+      });
+    }
+    // if (e.code === "Space") {
+    //   setVideoState((prevState) => {
+    //     return { ...prevState, playing: !prevState.playing };
+    //   });
+    // }
+    if (shortcutsAreOn) {
+      if (e.code === "KeyQ") {
+        playerRef.current.seekTo(videoState.playedSec - 10, "seconds");
+      }
+      if (e.code === "KeyW") {
+        playerRef.current.seekTo(videoState.playedSec - 3, "seconds");
+      }
+      if (e.code === "KeyE") {
+        playerRef.current.seekTo(videoState.playedSec + 3, "seconds");
+      }
+      if (e.code === "KeyR") {
+        playerRef.current.seekTo(videoState.playedSec + 10, "seconds");
+      }
+      if (e.code === "KeyA") {
+        playerRef.current.seekTo(videoState.playedSec - 1, "seconds");
+      }
+      if (e.code === "KeyS") {
+        playerRef.current.seekTo(videoState.playedSec - 0.2, "seconds");
+      }
+      if (e.code === "KeyD") {
+        playerRef.current.seekTo(videoState.playedSec + 0.2, "seconds");
+      }
+      if (e.code === "KeyF") {
+        playerRef.current.seekTo(videoState.playedSec + 1, "seconds");
+      }
+    }
+  };
 
+  const shortcutFunctionKeyUp = () => {
+    setShiftKeyDown(false);
+  };
+
+  useEffect(() => {
+    document.addEventListener("keydown", shortcutFunctionKeyDown, false);
+    document.addEventListener("keyup", shortcutFunctionKeyUp, false);
+
+    return () => {
+      document.removeEventListener("keydown", shortcutFunctionKeyDown, false);
+      document.addEventListener("keyup", shortcutFunctionKeyUp, false);
+    };
+  }, [shortcutFunctionKeyDown]);
+
+  //
+  const handleVideoSeek = () => {
+    console.log("seeking");
+  };
+  const handleVideoBuffer = () => {
+    console.log("buffering");
+  };
   ////
   //
 
@@ -233,6 +302,8 @@ function App() {
               height="90%"
               onReady={handleVideoReady}
               onProgress={handleProgress}
+              onSeek={handleVideoSeek}
+              onBuffer={handleVideoBuffer}
             />
             <div className="w-full grow px-2">
               <div className="flex justify-center">
@@ -242,6 +313,16 @@ function App() {
                 >
                   play/pause
                 </button>
+                <div>{videoState.playedSec}</div>
+                <div
+                  className="bg-orange-200"
+                  onClick={() => setShortCutsAreOn((prevState) => !prevState)}
+                >
+                  toggle shortcuts
+                </div>
+                <div className="bg-green-200">
+                  {shortcutsAreOn && "SCUT ON"}
+                </div>
               </div>
               <MiniTimeline
                 videoState={videoState}
@@ -292,6 +373,12 @@ function App() {
                   setSelectedAnnotationIdentifiers={
                     setSelectedAnnotationIdentifiers
                   }
+                  zoom={zoom}
+                  setZoom={setZoom}
+                  shiftKeyDown={shiftKeyDown}
+                  playerRef={playerRef}
+                  isAtStart={isAtStart}
+                  isAtEnd={isAtEnd}
                 />
                 <div className="w-full flex justify-end">
                   {backendIsWorking ? (

@@ -23,7 +23,6 @@ const Annotations = (props) => {
     setTimelineContainerWidth(timelineContainerRef?.current?.offsetWidth);
   }, []);
 
-  const [zoom, setZoom] = useState(1);
   const zoomIncrement = 1;
   const numberOfTicks = 5;
   const initialTickInterval = props.videoState.duration / numberOfTicks;
@@ -33,13 +32,19 @@ const Annotations = (props) => {
   const initialTimelineTicks = [];
   const [zoomTimelineTicks, setZoomTimelineTicks] = useState([]);
 
-  const timelineTicks = zoom === 1 ? initialTimelineTicks : zoomTimelineTicks;
+  const timelineTicks =
+    props.zoom === 1 ? initialTimelineTicks : zoomTimelineTicks;
   for (let i = 0; i <= numberOfTicks; i++) {
     initialTimelineTicks.push(i * initialTickInterval);
   }
 
   const timelineValueRange = [timelineTicks[0], timelineTicks[numberOfTicks]];
 
+  // const [sliderFrac, setSliderFrac] = useState(
+  //   (props.videoState.playedFrac * props.videoState.duration -
+  //     timelineValueRange[0]) /
+  //     (timelineValueRange[1] - timelineValueRange[0])
+  // );
   const sliderFrac =
     (props.videoState.playedFrac * props.videoState.duration -
       timelineValueRange[0]) /
@@ -48,21 +53,25 @@ const Annotations = (props) => {
   // // FUNCTIONS // //
   const calculateZoomTimelineTicks = (method, offset) => {
     // method: 'zoomin' or 'zoomout' or 'recalculate'
-    // offset: on what timetick the slider handle is set to upon new zoom level
+    // offset: on what timetick the slider handle is set to upon new props.zoom level
 
     let tickInterval;
 
     switch (method) {
       case "zoomin":
         tickInterval =
-          props.videoState.duration / ((zoom + zoomIncrement) * numberOfTicks);
+          props.videoState.duration /
+          // ((props.zoom + zoomIncrement) * numberOfTicks);
+          (props.zoom * 2 * numberOfTicks);
         break;
       case "zoomout":
         tickInterval =
-          props.videoState.duration / ((zoom - zoomIncrement) * numberOfTicks);
+          props.videoState.duration /
+          // ((props.zoom - zoomIncrement) * numberOfTicks);
+          ((props.zoom / 2) * numberOfTicks);
         break;
       case "recalculate":
-        tickInterval = props.videoState.duration / (zoom * numberOfTicks);
+        tickInterval = props.videoState.duration / (props.zoom * numberOfTicks);
         break;
     }
 
@@ -98,18 +107,20 @@ const Annotations = (props) => {
 
   // // HANDLERS // //
   const zoomOutHandler = () => {
-    if (zoom > 1) {
-      setZoom((prevState) => prevState - zoomIncrement);
+    if (props.zoom > 1) {
+      // props.setZoom((prevState) => prevState - zoomIncrement);
+      props.setZoom((prevState) => prevState / 2);
       calculateZoomTimelineTicks("zoomout", 2);
     }
   };
   const zoomInHandler = () => {
-    setZoom((prevState) => prevState + zoomIncrement);
+    // props.setZoom((prevState) => prevState + zoomIncrement);
+    props.setZoom((prevState) => prevState * 2);
     // calculateZoomInTimelineTicks();
     calculateZoomTimelineTicks("zoomin", 2);
   };
   const resetZoomHandler = () => {
-    setZoom(1);
+    props.setZoom(1);
   };
 
   const sliderChangeHandler = (e) => {
@@ -130,6 +141,38 @@ const Annotations = (props) => {
       props.videoState.duration;
     props.onMouseUp(parseFloat(playedFrac));
   };
+
+  const scrollZoomHandler = (e) => {
+    // console.log("scrolling", e);
+    if (props.isAtStart || props.isAtEnd) {
+      return;
+    }
+
+    // if (props.shiftKeyDown) {
+    //   if (e.deltaY < 0) {
+    //     props.playerRef.current.seekTo(
+    //       props.videoState.playedSec - 1,
+    //       "seconds"
+    //     );
+    //     console.log("🚙");
+    //     return;
+    //   }
+    // }
+    if (e.deltaY < 0) {
+      zoomInHandler();
+    }
+    if (e.deltaY > 0) {
+      zoomOutHandler();
+    }
+  };
+
+  useEffect(() => {
+    document.addEventListener("wheel", scrollZoomHandler, false);
+
+    return () => {
+      document.removeEventListener("wheel", scrollZoomHandler, false);
+    };
+  }, [scrollZoomHandler]);
 
   const addTimelineEventHandler = (e, type) => {
     console.log(e, type);
@@ -245,7 +288,7 @@ const Annotations = (props) => {
               ((event.eventTimeSec - timelineValueRange[0]) /
                 props.videoState.duration) *
               timelineContainerWidth *
-              zoom;
+              props.zoom;
 
             const measureAtTimeInRange =
               event.measureAtTimeSec > timelineValueRange[0] &&
@@ -257,7 +300,7 @@ const Annotations = (props) => {
                 // timelineValueRange[0]
                 props.videoState.duration) *
               timelineContainerWidth *
-              zoom;
+              props.zoom;
 
             // event type:
             // void -> if has measureattime, set color (blue)
@@ -378,7 +421,7 @@ const Annotations = (props) => {
           setIsDraggingScrollBar={setIsDraggingScrollBar}
           timelineValueRange={timelineValueRange}
           videoState={props.videoState}
-          zoomLevel={zoom}
+          zoomLevel={props.zoom}
           numberOfTicks={numberOfTicks}
           setZoomTimelineTicks={setZoomTimelineTicks}
           seekTo={props.seekTo}

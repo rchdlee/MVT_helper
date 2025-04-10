@@ -44,7 +44,7 @@ const Start = (props) => {
           <input
             type="file"
             onChange={props.handleFileUpload}
-            className="border-[1px] block"
+            className="border-[1px] block w-164"
           />
           {props.videoIsLoaded && <div>V</div>}
         </div>

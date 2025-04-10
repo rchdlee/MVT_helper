@@ -2,73 +2,78 @@ import { createSlice, current } from "@reduxjs/toolkit";
 // import { v4 as uuidv4 } from "uuid";
 
 const initialState = {
-  // startTimeIRL: null,
-  // endTimeIRL: null,
-  // data: [],
-  startTimeIRL: "19:14:18:403",
-  endTimeIRL: "21:30:29:788",
+  startTimeIRL: null,
+  endTimeIRL: null,
   data: [
     {
-      categoryName: "mouse1",
-      events: [
-        {
-          eventType: "void",
-          eventTimeSec: 25,
-          measureAtTimeSec: 200,
-          eventID: "testid1a",
-          location: "RBC",
-          note: "my note",
-        },
-        {
-          eventType: "void",
-          eventTimeSec: 425,
-          measureAtTimeSec: 525,
-          eventID: "testid1b",
-          location: "",
-          note: "",
-        },
-      ],
-    },
-    {
-      categoryName: "mouse2",
-      events: [
-        {
-          eventType: "void",
-          eventTimeSec: 200,
-          measureAtTimeSec: 425,
-          eventID: "testid2",
-          location: "",
-          note: "my note 2",
-        },
-      ],
-    },
-    {
-      categoryName: "mouse3",
-      events: [
-        {
-          eventType: "leak",
-          eventTimeSec: 35,
-          measureAtTimeSec: null,
-          eventID: "testid3",
-          location: "",
-          note: "",
-        },
-      ],
-    },
-    {
-      categoryName: "mouse4",
-      events: [
-        {
-          eventType: "void",
-          eventTimeSec: 75,
-          measureAtTimeSec: 220,
-          eventID: "testid4",
-          location: "",
-          note: "",
-        },
-      ],
+      categoryName: "stats",
+      events: [],
     },
   ],
+  // startTimeIRL: "19:14:18:403",
+  // endTimeIRL: "21:30:29:788",
+  // data: [
+  //   {
+  //     categoryName: "mouse1",
+  //     events: [
+  //       {
+  //         eventType: "void",
+  //         eventTimeSec: 25,
+  //         measureAtTimeSec: 200,
+  //         eventID: "testid1a",
+  //         location: "RBC",
+  //         note: "my note",
+  //       },
+  //       {
+  //         eventType: "void",
+  //         eventTimeSec: 425,
+  //         measureAtTimeSec: 525,
+  //         eventID: "testid1b",
+  //         location: "",
+  //         note: "",
+  //       },
+  //     ],
+  //   },
+  //   {
+  //     categoryName: "mouse2",
+  //     events: [
+  //       {
+  //         eventType: "void",
+  //         eventTimeSec: 200,
+  //         measureAtTimeSec: 425,
+  //         eventID: "testid2",
+  //         location: "",
+  //         note: "my note 2",
+  //       },
+  //     ],
+  //   },
+  //   {
+  //     categoryName: "mouse3",
+  //     events: [
+  //       {
+  //         eventType: "leak",
+  //         eventTimeSec: 35,
+  //         measureAtTimeSec: null,
+  //         eventID: "testid3",
+  //         location: "",
+  //         note: "",
+  //       },
+  //     ],
+  //   },
+  //   {
+  //     categoryName: "mouse4",
+  //     events: [
+  //       {
+  //         eventType: "void",
+  //         eventTimeSec: 75,
+  //         measureAtTimeSec: 220,
+  //         eventID: "testid4",
+  //         location: "",
+  //         note: "",
+  //       },
+  //     ],
+  //   },
+  // ],
 };
 
 const annotationSlice = createSlice({
