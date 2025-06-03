@@ -147,17 +147,6 @@ const Annotations = (props) => {
     if (props.isAtStart || props.isAtEnd) {
       return;
     }
-
-    // if (props.shiftKeyDown) {
-    //   if (e.deltaY < 0) {
-    //     props.playerRef.current.seekTo(
-    //       props.videoState.playedSec - 1,
-    //       "seconds"
-    //     );
-    //     console.log("🚙");
-    //     return;
-    //   }
-    // }
     if (e.deltaY < 0) {
       zoomInHandler();
     }
