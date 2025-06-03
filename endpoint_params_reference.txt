@@ -1,0 +1,75 @@
+eventData (state.annotation.data):
+[
+    {
+        "categoryName": "stats",
+        "events": []
+    },
+    {
+        "categoryName": "11",
+        "events": [
+            {
+                "eventID": "4b2666f0-829b-4bcc-bca9-254b92cd3d5e",
+                "eventType": "void",
+                "eventTimeSec": 203.160222,
+                "measureAtTimeSec": 253.290666,
+                "location": "",
+                "note": ""
+            }
+        ]
+    },
+    {
+        "categoryName": "12",
+        "events": [
+            {
+                "eventID": "ca6b02ac-37ef-4128-9379-7c2be964d3b2",
+                "eventType": "void",
+                "eventTimeSec": 794.171777,
+                "measureAtTimeSec": 837.70611,
+                "location": "",
+                "note": ""
+            },
+            {
+                "eventID": "83d44f13-b1e0-4143-bff1-a0da7a3f5948",
+                "eventType": "void",
+                "eventTimeSec": 691.272444,
+                "measureAtTimeSec": 736.125999,
+                "location": "",
+                "note": ""
+            }
+        ]
+    },
+    {
+        "categoryName": "13",
+        "events": []
+    },
+    {
+        "categoryName": "14",
+        "events": [
+            {
+                "eventID": "6b52528b-fb7f-4475-a391-322381893814",
+                "eventType": "void",
+                "eventTimeSec": 824.513888,
+                "measureAtTimeSec": 1009.204999,
+                "location": "",
+                "note": ""
+            }
+        ]
+    }
+]
+
+
+timePointArray = 
+[
+    [],
+    [
+        253.290666
+    ],
+    [
+        837.70611,
+        736.125999
+    ],
+    [],
+    [
+        1009.204999
+    ]
+]

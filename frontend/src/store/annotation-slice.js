@@ -92,6 +92,14 @@ const annotationSlice = createSlice({
         state.data.push(category);
       }
     },
+    resetCategories: (state, action) => {
+      state.data = [
+        {
+          categoryName: "stats",
+          events: [],
+        },
+      ];
+    },
     addNewEvent: (state, action) => {
       const data = action.payload;
       const categoryName = data.category;
@@ -212,6 +220,7 @@ const annotationSlice = createSlice({
 
 export const {
   setupCategories,
+  resetCategories,
   addNewEvent,
   setStartTimeIRL,
   setEndTimeIRL,

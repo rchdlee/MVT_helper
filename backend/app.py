@@ -48,13 +48,14 @@ def clear_screenshots_folder():
         # Create the screenshots folder if it doesn't exist
         os.makedirs(screenshots_folder)
 
-def capture_screenshots(video_path, time_points_arrays):
+def capture_screenshots(video_path, time_points_arrays): # multiple time point arrays
     results = []
 
     # Loop through each set of time points
     for index, time_points in enumerate(time_points_arrays):
         # Generate a unique folder name with the index as an identifier
-        folder_name = f"mouse_{index + 1}_{uuid.uuid4()}"  # Include index in folder name
+        # folder_name = f"mouse_{index + 1}_{uuid.uuid4()}"  # Include index in folder name
+        folder_name = f"mouse_{index + 1}"  # Include index in folder name
         output_folder = os.path.join("screenshots", folder_name)
         if not os.path.exists(output_folder):
             os.makedirs(output_folder)
@@ -112,6 +113,46 @@ def capture_screenshots(video_path, time_points_arrays):
 
     return results
 
+def capture_screenshots_single(video_path, time_points_array): # for Screenshots from CSV functionality
+    results = []
+
+    folder_name = "screenshots_from_csv"
+    output_folder = os.path.join("screenshots", folder_name)
+    if not os.path.exists(output_folder):
+        os.makedirs(output_folder)
+
+    try:
+        #Load video file
+        video = VideoFileClip(video_path)
+        width, height = video.size
+
+        video = video.with_effects([vfx.Resize(2)])
+
+        screenshots = []
+
+        for i, time_point in enumerate(time_points_array):
+            if time_point < 0 or time_point > video.duration:
+                app.logger.warning(f"Time point {time_point} is out of bounds for video.")
+                continue
+            
+            output_path = os.path.join(output_folder, f"screenshot_{i+1}_{time_point}_sec.png")
+            video.save_frame(output_path, t=time_point)
+            screenshots.append(output_path)
+
+        video.close()
+
+        results.append({
+            "folder_name": folder_name,
+            "screenshots": screenshots
+        })
+    
+    except Exception as e:
+        app.logger.error(f"Error processing video: {str(e)}")
+        raise e
+
+    return results
+
+
 @app.route('/capture', methods=['POST'])
 def capture():
     data = request.json
@@ -130,6 +171,26 @@ def capture():
     except Exception as e:
         app.logger.error(f"Error capturing screenshots: {str(e)}")
         return jsonify({"error": str(e)}), 500
+
+@app.route('/capture_single', methods=['POST'])    
+def capture_single():
+    data = request.json
+    video_path = data.get('video_path')
+    time_points_array = data.get('time_points_array')
+
+    if not video_path or not time_points_array:
+        return jsonify({"error": "Missing video_path or time_points_arrays"}), 400
+    
+    clear_screenshots_folder()
+
+    try:
+        # Process all sets of time points
+        results = capture_screenshots_single(video_path, time_points_array)
+        return jsonify({"results": results})
+    except Exception as e:
+        app.logger.error(f"Error capturing screenshots: {str(e)}")
+        return jsonify({"error": str(e)}), 500
+
 
 if __name__ == '__main__':
     app.run(debug=True)

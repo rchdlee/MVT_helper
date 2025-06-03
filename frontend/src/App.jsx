@@ -5,13 +5,14 @@ import "./App.css";
 import axios, { all } from "axios";
 import ReactPlayer from "react-player";
 import MiniTimeline from "./MiniTimeline";
-import Start from "./Start";
+import Start from "./Start/Start";
 
 import { useSelector, useDispatch } from "react-redux";
 import {
   setStartTimeIRL,
   setEndTimeIRL,
   editEventTime,
+  resetCategories,
 } from "./store/annotation-slice";
 
 import testVideo from "./assets/video1mp4.mp4";
@@ -70,6 +71,11 @@ function App() {
     setVideoPath(URL.createObjectURL(e.target.files[0]));
     setVideoIsLoaded(true);
     setVideoName(e.target.files[0].name);
+  };
+
+  const backToStartHandler = () => {
+    setIsAtStart(true);
+    dispatch(resetCategories());
   };
 
   const togglePlayStateHandler = () => {
@@ -282,6 +288,7 @@ function App() {
         <Start
           handleFileUpload={handleFileUpload}
           videoIsLoaded={videoIsLoaded}
+          setVideoIsLoaded={setVideoIsLoaded}
           setIsAtStart={setIsAtStart}
         />
       )}
@@ -290,7 +297,10 @@ function App() {
         <div className="flex w-full h-screen gap-2 p-2">
           {/* LEFT SIDE */}
           <div className="flex flex-col justify-start h-full items-start">
-            <p className="text-xs">{videoName}</p>
+            <div className="flex gap-2">
+              <button onClick={backToStartHandler}>back</button>
+              <p className="text-xs">{videoName}</p>
+            </div>
             <ReactPlayer
               ref={playerRef}
               url={videoPath}
