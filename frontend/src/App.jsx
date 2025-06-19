@@ -63,6 +63,23 @@ function App() {
     playbackSpeed: 1,
   });
 
+  // Alert user on page refresh/close
+  useEffect(() => {
+    const handleBeforeUnload = (event) => {
+      // Standard way to prompt the user for confirmation
+      event.preventDefault();
+      // For older browsers, assign a string to returnValue
+      event.returnValue = "";
+    };
+
+    window.addEventListener("beforeunload", handleBeforeUnload);
+
+    // Clean up the event listener when the component unmounts
+    return () => {
+      window.removeEventListener("beforeunload", handleBeforeUnload);
+    };
+  }, []);
+
   // // HANDLERS // //
   const handleFileUpload = (e) => {
     setVideoPath(URL.createObjectURL(e.target.files[0]));
