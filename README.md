@@ -4,9 +4,9 @@ This program's purpose is to help streamline the analysis of MVT videos.
 
 ## Requirements
 
-Download the latest version of [Node.js]https://nodejs.org/en/download
+Download the latest version of [Node.js](https://nodejs.org/en/download)
 
-Install [Python]https://www.python.org/downloads/ if haven't done so already. Make sure to add python to PATH.
+Install [Python](https://www.python.org/downloads/) if haven't done so already. Make sure to add python to PATH.
 
 ##
 
@@ -44,16 +44,35 @@ npm install # Install packages
 
 ## Starting the application
 
-Windows
+We will create a script to start the application.
+
+Windows:
+
+1. Create a file called `start.bat`
+2. Paste the following into the file, making sure to replace the [] with the correct path
 
 ```bash
-./start.bat
+@echo off
+start cmd /k "cd /d [path-to-MVT_HELPER-folder]\backend && pipenv run python app.py"
+start cmd /k "cd /d [path-to-MVT_HELPER-folder]\frontend && npm run dev"
+start chrome.exe "http://localhost:5173/" # opens in Google Chrome
 ```
 
 Mac
 
+1. Create a file called `start.sh`
+2. Paste the following into the file, making sure to replace the [] with the correct path
+
 ```bash
-./ #need to make this file
+#!/bin/bash
+cd [path-to-MVT_HELPER-folder]/backend
+pipenv run python app.py &
+
+cd [path-to-MVT_HELPER-folder]/frontend
+npm run dev &
+
+open "http://localhost:5173/"
+
 ```
 
 ## Usage
