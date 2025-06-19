@@ -12,13 +12,15 @@ Install [Python](https://www.python.org/downloads/) if haven't done so already. 
 
 ## Installation and Setup
 
+> These instuctions only need to be completed once.
+
 Clone the repo into your desired location.
 
 ```bash
 git clone https://github.com/rchdlee/MVT_helper.git
 ```
 
-Create Python Environment (only needs to be done once)
+Create Python Environment
 
 ```bash
 cd [path-to-MVT_HELPER-folder]/backend # Navigate to backend folder
@@ -32,7 +34,7 @@ pip install pipenv # Install pipenv
 pipenv install requirements.txt # Install packages
 ```
 
-Install Frontend Packages (only needs to be done once)
+Install Frontend Packages
 
 ```bash
 cd [path-to-MVT_HELPER-folder]/frontend # Navigate to frontend folder
@@ -76,3 +78,30 @@ open "http://localhost:5173/"
 ```
 
 ## Usage
+
+Start
+
+- Select the video you want to analyze. If you copy the file path of the video here, it will save you some time next step.
+- Input mouse names/IDs
+
+Annotator
+![Screenshot of the MVT Helper main interface](/images/MVT_helper_screenshot.PNG)
+
+> ⭐ = required
+
+1. ⭐Paste File Path here
+2. ⭐Start Time of the video (time displayed at bottom of video). Click the ⏪ icon to go to the first frame
+3. ⭐End Time of the video (time displayed at the bottom of video). Click the ⏩ icon to go to the last frame
+4. Change Selected Event Type (void <-> leak)
+5. Event Time - the time at which the void/leak happens. Click the 🖋 icon to change the time to the current video frame.
+6. ⭐ Measure Time - the time at which you'd like to create a screenshot for the void. When a void event is created, select `Set Measure Time` to set the measure time at the current video frame. Once set, click the 🖋 icon to change the measure time to the current video frame. Required for all void events.
+7. (temporary) "Stats" category. Use this timeline to make a screenshot of calibration squares and to mark first mouse in/last mouse out
+8. `V` button - Create a void event at the current video frame.
+9. `L` button - Create a leak event at the current video frame.
+10. Zoom timeline in/out. R = reset zoom. Zoom can also be controlled by scrolling up/down
+11. Example void event with all requried information (measure time)
+12. Example leak event (does not have measure time category)
+13. Currently selected event (has circle on event marker)
+14. The measure time of currently selected/hovered event
+15. Example void event that still needs measure time info
+16. Click to generate screenshots at all void event measure times and to create a .csv file of event times.
