@@ -1,7 +1,7 @@
 const LoadMVT = () => {
   return (
     <div>
-      <p>🚧</p>
+      <p>Under Construction 🚧</p>
     </div>
   );
 };

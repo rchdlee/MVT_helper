@@ -13,8 +13,8 @@ const NewMVT = (props) => {
 
       <div className="flex gap-2 mt-2">
         <h3 className="w-24">Mouse ID's:</h3>
-        <div className="flex gap-2">
-          <div>
+        <div className="flex gap-2 flex-grow">
+          <div className="w-1/2">
             <div className="flex flex-col">
               <label htmlFor="1" className="text-sm">
                 Mouse 1
@@ -38,7 +38,7 @@ const NewMVT = (props) => {
               />
             </div>
           </div>
-          <div>
+          <div className="w-1/2">
             <div className="flex flex-col">
               <label htmlFor="3" className="text-sm">
                 Mouse 3
@@ -65,12 +65,14 @@ const NewMVT = (props) => {
         </div>
       </div>
 
-      <button
-        onClick={props.continueHandler}
-        className="border-[1px] px-2 py-1 mt-1"
-      >
-        Continue
-      </button>
+      <div className="flex justify-end mt-6">
+        <button
+          onClick={props.continueHandler}
+          className="border-[1px] px-2 py-1 mt-1"
+        >
+          Continue
+        </button>
+      </div>
     </div>
   );
 };

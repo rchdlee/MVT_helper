@@ -128,7 +128,9 @@ const EventInformation = (props) => {
             // onClick={deleteEventHandler}
           >
             <p>🔄</p>
-            {/* <p className="group-hover:underline text-sm">SWITCH EVENT TYPE</p> */}
+            <p className="group-hover:underline group-hover:opacity-1  text-sm">
+              SWITCH EVENT TYPE
+            </p>
           </button>
         </div>
         {/* EVENT TIME */}

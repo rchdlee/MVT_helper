@@ -50,26 +50,30 @@ const Start = (props) => {
   };
 
   return (
-    // <div className="flex flex-col items-center mt-12">
-    <div className="">
-      <StartTabs
-        openTab={openTab}
-        // setOpenTab={setOpenTab}
-        switchTabsHandler={switchTabsHandler}
-      />
-      {openTab === "new_mvt" && (
-        <NewMVT
-          input1={input1}
-          input2={input2}
-          input3={input3}
-          input4={input4}
-          videoIsLoaded={props.videoIsLoaded}
-          handleFileUpload={props.handleFileUpload}
-          continueHandler={continueHandler}
+    <div className="flex flex-col items-center mt-4">
+      <div className="mt-2">
+        <div>
+          <h1 className="font-bold text-xl">MVT Helper</h1>
+        </div>
+        <StartTabs
+          openTab={openTab}
+          // setOpenTab={setOpenTab}
+          switchTabsHandler={switchTabsHandler}
         />
-      )}
-      {openTab === "load_mvt" && <LoadMVT />}
-      {openTab === "screenshot" && <ScreenshotsCSV />}
+        {openTab === "new_mvt" && (
+          <NewMVT
+            input1={input1}
+            input2={input2}
+            input3={input3}
+            input4={input4}
+            videoIsLoaded={props.videoIsLoaded}
+            handleFileUpload={props.handleFileUpload}
+            continueHandler={continueHandler}
+          />
+        )}
+        {openTab === "load_mvt" && <LoadMVT />}
+        {openTab === "screenshot" && <ScreenshotsCSV />}
+      </div>
     </div>
   );
 };
