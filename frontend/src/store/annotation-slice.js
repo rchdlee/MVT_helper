@@ -135,6 +135,47 @@ const annotationSlice = createSlice({
       // needs a check so that correct format is inputted
       state.endTimeIRL = endTime;
     },
+    switchEventType: (state, action) => {
+      const data = action.payload;
+      const categoryName = data.category;
+      const eventID = data.eventID;
+
+      const oldEventType = state.data
+        .filter((cat) => {
+          return cat.categoryName === categoryName;
+        })[0]
+        .events.filter((event) => {
+          return event.eventID === eventID;
+        })[0].eventType;
+
+      state.data
+        .filter((cat) => {
+          return cat.categoryName === categoryName;
+        })[0]
+        .events.filter((event) => {
+          return event.eventID === eventID;
+        })[0].measureAtTimeSec = null;
+
+      if (oldEventType === "void") {
+        state.data
+          .filter((cat) => {
+            return cat.categoryName === categoryName;
+          })[0]
+          .events.filter((event) => {
+            return event.eventID === eventID;
+          })[0].eventType = "leak";
+      }
+
+      if (oldEventType === "leak") {
+        state.data
+          .filter((cat) => {
+            return cat.categoryName === categoryName;
+          })[0]
+          .events.filter((event) => {
+            return event.eventID === eventID;
+          })[0].eventType = "void";
+      }
+    },
     setMeasureAtTime: (state, action) => {
       const data = action.payload;
       const categoryName = data.category;
@@ -224,6 +265,7 @@ export const {
   addNewEvent,
   setStartTimeIRL,
   setEndTimeIRL,
+  switchEventType,
   setMeasureAtTime,
   setLocationString,
   setNoteString,

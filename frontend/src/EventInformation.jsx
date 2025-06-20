@@ -5,6 +5,7 @@ import {
   setNoteString,
   deleteEvent,
   editEventTime,
+  switchEventType,
 } from "./store/annotation-slice";
 import {
   secondsToMinAndSec,
@@ -30,6 +31,16 @@ const EventInformation = (props) => {
   //   props.selectedAnnotationIdentifiers,
   //   "😜"
   // );
+
+  const switchEventTypeHandler = () => {
+    console.log("switching event");
+    dispatch(
+      switchEventType({
+        category: props.selectedAnnotationIdentifiers.categoryName,
+        eventID: props.selectedAnnotationIdentifiers.eventID,
+      })
+    );
+  };
 
   const setMeasureAtTimeHandler = (e) => {
     // const eventInformationIdentifiers = e.target.id;
@@ -125,10 +136,10 @@ const EventInformation = (props) => {
           <p>Event Type: {eventInformation?.eventType.toUpperCase()}</p>
           <button
             className="group flex items-center gap-1"
-            // onClick={deleteEventHandler}
+            onClick={switchEventTypeHandler}
           >
             <p>🔄</p>
-            <p className="group-hover:underline group-hover:opacity-1  text-sm">
+            <p className="opacity-0 group-hover:opacity-100 text-[10px]">
               SWITCH EVENT TYPE
             </p>
           </button>
