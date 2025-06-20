@@ -87,14 +87,15 @@ Run the Script:
 ./start.sh # Mac
 ```
 
-## Usage
+# Usage
 
-Start
+## Start
 
 - Select the video you want to analyze. If you copy the file path of the video here, it will save you some time next step.
 - Input mouse names/IDs
 
-Annotator
+## Annotator
+
 ![Screenshot of the MVT Helper main interface](/images/MVT_helper_screenshot.PNG)
 
 > ⭐ = required
@@ -115,3 +116,7 @@ Annotator
 14. The measure time of currently selected/hovered event
 15. Example void event that still needs measure time info
 16. Click to generate screenshots at all void event measure times and to create a .csv file of event times.
+
+## Finish
+
+Once submitted, screenshots will be populated in `MVT_helper > backend > screenshots` folder
