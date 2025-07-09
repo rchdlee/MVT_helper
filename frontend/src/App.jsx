@@ -25,7 +25,6 @@ import Annotations from "./Annotations";
 import EventInformation from "./EventInformation";
 import End from "./End";
 import UserInputs from "./UserInputs";
-import LoadSpinner from "./UI/LoadSpinner";
 
 function App() {
   const playerRef = useRef();
@@ -41,8 +40,12 @@ function App() {
   // const [isAtStart, setIsAtStart] = useState(false);
   // //
 
-  const [backendIsWorking, setBackendIsWorking] = useState(false);
+  const [backendIsProcessing, setBackendIsProcessing] = useState(false);
   const [isAtEnd, setIsAtEnd] = useState(false);
+
+  const [popupIsOpen, setPopupIsOpen] = useState(false);
+  const [popupMessage, setPopupMessage] = useState("");
+  const [backendHasError, setBackendHasError] = useState(false);
 
   const [zoom, setZoom] = useState(1);
 
@@ -155,11 +158,65 @@ function App() {
     dispatch(setEndTimeIRL(e.target.value));
   };
 
+  const checkStartEndTimeInputFormat = (time) => {
+    if (time === null) {
+      return false;
+    }
+    const splitTime = time.split(":");
+    console.log(splitTime, "🎨");
+
+    // check if all values for H:M:S:msec are there
+    if (splitTime.length !== 4) {
+      console.log("length is not 4");
+      return false;
+    }
+
+    // check that there are 2 "digits" for the H:M:S and 3 "digits" for "msec"
+    for (let i = 0; i < splitTime.length - 1; i++) {
+      const n = splitTime[i];
+      if (n.length !== 2) {
+        console.log("H M or S is not 2 digits");
+        return false;
+      }
+    }
+    if (splitTime[splitTime.length - 1].length !== 3) {
+      console.log("msec is not 3 digits");
+      return false;
+    }
+
+    // //  check if all values are numbers
+    for (let i = 0; i < splitTime.length; i++) {
+      const n = +splitTime[i];
+      console.log(n);
+      if (Number.isNaN(n)) {
+        console.log("there is a NaN value");
+        return false;
+      }
+    }
+    return true;
+  };
+
   const submitAnnotationsHandler = async () => {
     console.log("submitting to backend", eventData);
-    setBackendIsWorking(true);
-    // check if all voids have a measure@ time
+    setBackendIsProcessing(true);
 
+    const startTimeIsCorrectFormat = checkStartEndTimeInputFormat(
+      reduxState.startTimeIRL
+    );
+    const endTimeIsCorrectFormat = checkStartEndTimeInputFormat(
+      reduxState.endTimeIRL
+    );
+    console.log(startTimeIsCorrectFormat, endTimeIsCorrectFormat);
+    if (startTimeIsCorrectFormat !== true || endTimeIsCorrectFormat !== true) {
+      console.log("NSEIRTNSRIE NOT CORRECT FORMAT");
+      setPopupMessage(
+        'Start or End Time is incorrectly formatted. Make sure it is in "HH:MM:SS:mmm" format'
+      );
+      setPopupIsOpen(true);
+      return;
+    }
+
+    // // check if all voids have a measure@ time // //
     let allVoidsHaveData = true;
     for (let i = 0; i < eventData.length; i++) {
       for (let j = 0; j < eventData[i].events.length; j++) {
@@ -178,6 +235,12 @@ function App() {
         }
       }
     }
+    if (!allVoidsHaveData) {
+      setPopupMessage('One or more void events do not have a "measure time"');
+      setPopupIsOpen(true);
+      console.log("unfinished measure time");
+      return;
+    }
 
     if (allVoidsHaveData) {
       const timePointArray = [];
@@ -192,6 +255,7 @@ function App() {
       }
 
       console.log(fullPath, timePointArray, "🚄");
+      setIsAtEnd(true);
 
       // console.log("completed.", videoName.split(".")[0], timePointArray);
       try {
@@ -210,15 +274,24 @@ function App() {
         // setScreenshots(response.data.screenshots);
         // setHasScreenshots(true);
         console.log("finished", response.data.screenshots);
-        setBackendIsWorking(false);
-        setIsAtEnd(true);
+        setBackendIsProcessing(false);
       } catch (error) {
         console.error("Error capturing screenshots:", error);
+        setBackendHasError(true);
+        setPopupMessage(
+          "There was an error processing screenshots. The CSV is still good so please download it first. Then go back to the timeline and make sure the FULL video path is being passed in."
+        );
+        setPopupIsOpen(true);
+        setBackendIsProcessing(false);
       }
       return;
     }
-    console.log("UNFINISHED");
-    return;
+  };
+
+  const closePopupHandler = () => {
+    console.log("closing popup");
+    setPopupMessage("");
+    setPopupIsOpen(false);
   };
 
   //
@@ -248,7 +321,22 @@ function App() {
       )}
       {/* {!isAtStart && !isAtEnd && ( */}
       {!isAtStart && (
-        <div className="flex w-full h-screen gap-2 p-2">
+        <div className="flex w-full h-screen gap-2 p-2 relative">
+          {/* ERROR POPUP */}
+          <div
+            className={`absolute left-1/2 transform -translate-x-1/2 -translate-y-full transition-all duration-300 ${
+              popupIsOpen ? "top-32" : "-top-64"
+            } border-2 z-50 bg-white w-96 h-30 px-4 py-2 flex items-center justify-between gap-3 text-sm`}
+          >
+            <p className="font-semibold">ERROR:</p>
+            <p>{popupMessage}</p>
+            <button
+              className="bg-red-400 px-2 w-6 h-6"
+              onClick={closePopupHandler}
+            >
+              X
+            </button>
+          </div>
           {/* LEFT SIDE */}
           <div className="flex flex-col justify-start h-full items-start">
             <div className="flex gap-2">
@@ -344,18 +432,18 @@ function App() {
                   isAtEnd={isAtEnd}
                 />
                 <div className="w-full flex justify-end">
-                  {backendIsWorking ? (
+                  {/* {backendIsProcessing ? (
                     <div className="w-32 flex justify-center">
                       <LoadSpinner />
                     </div>
-                  ) : (
-                    <button
-                      className="bg-purple-300"
-                      onClick={submitAnnotationsHandler}
-                    >
-                      submit annotations
-                    </button>
-                  )}
+                  ) : ( */}
+                  <button
+                    className="bg-purple-300"
+                    onClick={submitAnnotationsHandler}
+                  >
+                    submit annotations
+                  </button>
+                  {/* )} */}
                 </div>
               </div>
             </div>
@@ -367,6 +455,10 @@ function App() {
               videoState={videoState}
               videoName={videoName}
               seekTo={handleSeek}
+              backendIsProcessing={backendIsProcessing}
+              setZoom={setZoom}
+              backendHasError={backendHasError}
+              setBackendHasError={setBackendHasError}
             />
           )}
         </div>

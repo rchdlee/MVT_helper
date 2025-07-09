@@ -361,14 +361,23 @@ const Annotations = (props) => {
     <div className="w-full flex" id="annotation parent container">
       <div className="">
         <div className="w-24 h-8">
-          <button className="border-2 w-6 h-6" onClick={zoomOutHandler}>
+          <button
+            className="bg-slate-200 hover:bg-slate-300 w-6 h-6 mr-1"
+            onClick={resetZoomHandler}
+          >
+            R
+          </button>
+          <button
+            className="bg-slate-200 hover:bg-slate-300 w-6 h-6 mr-1"
+            onClick={zoomOutHandler}
+          >
             -
           </button>
-          <button className="border-2 w-6 h-6" onClick={zoomInHandler}>
+          <button
+            className="bg-slate-200 hover:bg-slate-300 w-6 h-6 mr-1"
+            onClick={zoomInHandler}
+          >
             +
-          </button>
-          <button className="border-2 w-6 h-6" onClick={resetZoomHandler}>
-            R
           </button>
         </div>
         <div className="w-24 border-l-[1px] text-sm">

@@ -120,3 +120,5 @@ Run the Script:
 ## Finish
 
 Once submitted, screenshots will be populated in `MVT_helper > backend > screenshots` folder
+
+Event information will be stored in the generated CSV. Columns B-E of the CSV can be pasted into `MVT Template RL.xlsx`

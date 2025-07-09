@@ -4,12 +4,15 @@ import {
   secondsToMinAndSecDecimal,
 } from "./helpers/SecondsTimeFormat";
 import EventSummary from "./EventSummary";
+import LoadSpinner from "./UI/LoadSpinner";
 
 const End = (props) => {
   const fileName = props.videoName.split(".")[0] + "_eventdata";
 
   const backButtonHandler = () => {
+    props.setZoom(1);
     props.setIsAtEnd(false);
+    props.setBackendHasError(false);
   };
 
   const addSecondsToActualStartTime = (timeSec) => {
@@ -154,6 +157,20 @@ const End = (props) => {
           seekTo={props.seekTo}
         />
       </div>
+      {props.backendIsProcessing && (
+        <div className="w-32 flex justify-center">
+          <p>Backend is processing screenshots...</p>
+          <LoadSpinner />
+        </div>
+      )}
+      {props.backendHasError && <p>Error with backend.</p>}
+      {!props.backendIsProcessing && !props.backendHasError && (
+        <p>
+          ✅ Finished taking screenshots. They are located in MVT_helper /
+          backend / screenshots
+        </p>
+      )}
+
       <div className="group">
         <CSVLink
           data={csvData}
