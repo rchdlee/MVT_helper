@@ -16,7 +16,6 @@ import {
 } from "./store/annotation-slice";
 
 import testVideo from "./assets/video1mp4.mp4";
-
 import {
   secondsToMinAndSec,
   secondsToMinAndSecDecimal,

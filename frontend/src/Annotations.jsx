@@ -12,6 +12,8 @@ import {
 } from "./helpers/SecondsTimeFormat";
 import Scrollbar from "./Scrollbar";
 
+import { useKeyPress } from "./helpers/useKeyPress";
+
 const Annotations = (props) => {
   const dispatch = useDispatch();
   const reduxState = useSelector((state) => state.annotation.data);
@@ -162,6 +164,18 @@ const Annotations = (props) => {
       document.removeEventListener("wheel", scrollZoomHandler, false);
     };
   }, [scrollZoomHandler]);
+
+  // KEY PRESS DETECTION FOR ZOOM //
+
+  useKeyPress(["-", "="], (key) => {
+    if (key === "-") {
+      // console.log("Minus key pressed!");
+      zoomOutHandler();
+    } else if (key === "=") {
+      // console.log("Equals key pressed!");
+      zoomInHandler();
+    }
+  });
 
   const addTimelineEventHandler = (e, type) => {
     console.log(e, type);
