@@ -71,7 +71,13 @@ const Start = (props) => {
             continueHandler={continueHandler}
           />
         )}
-        {openTab === "load_mvt" && <LoadMVT />}
+        {openTab === "load_mvt" && (
+          <LoadMVT
+            videoIsLoaded={props.videoIsLoaded}
+            handleFileUpload={props.handleFileUpload}
+            setIsAtStart={props.setIsAtStart}
+          />
+        )}
         {openTab === "screenshot" && <ScreenshotsCSV />}
       </div>
     </div>

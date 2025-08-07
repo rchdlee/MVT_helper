@@ -256,6 +256,12 @@ const annotationSlice = createSlice({
         .events.splice(eventIndex, 1);
       console.log(eventIndex, "🦥");
     },
+    // LOAD MVT
+    loadCategories: (state, action) => {
+      const data = action.payload.data;
+
+      state.data = data;
+    },
   },
 });
 
@@ -271,6 +277,7 @@ export const {
   setNoteString,
   editEventTime,
   deleteEvent,
+  loadCategories,
 } = annotationSlice.actions;
 
 export default annotationSlice.reducer;
