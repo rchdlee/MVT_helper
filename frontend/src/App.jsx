@@ -199,6 +199,12 @@ function App() {
     console.log("submitting to backend", eventData);
     setBackendIsProcessing(true);
 
+    const mouseIDs = eventData.map((obj) => {
+      return obj.categoryName;
+    });
+
+    // console.log(mouseIDs);
+
     const startTimeIsCorrectFormat = checkStartEndTimeInputFormat(
       reduxState.startTimeIRL
     );
@@ -267,7 +273,8 @@ function App() {
           // time_points: [428, 428.1, 428.2,428.25,428.5,429, 12.4],
           time_points_arrays: timePointArray,
           // quadrant: "top-left",
-          // crop_area: cropArea
+          // crop_area: cropArea,
+          mouse_IDs: mouseIDs,
         });
 
         // setScreenshots(response.data.screenshots);

@@ -48,14 +48,14 @@ def clear_screenshots_folder():
         # Create the screenshots folder if it doesn't exist
         os.makedirs(screenshots_folder)
 
-def capture_screenshots(video_path, time_points_arrays): # multiple time point arrays
+def capture_screenshots(video_path, time_points_arrays, mouse_IDs): # multiple time point arrays
     results = []
 
     # Loop through each set of time points
     for index, time_points in enumerate(time_points_arrays):
         # Generate a unique folder name with the index as an identifier
         # folder_name = f"mouse_{index + 1}_{uuid.uuid4()}"  # Include index in folder name
-        folder_name = f"mouse_{index + 1}"  # Include index in folder name
+        folder_name = "stats" if index == 0 else f"position{index}_{mouse_IDs[index]}"
         output_folder = os.path.join("screenshots", folder_name)
         if not os.path.exists(output_folder):
             os.makedirs(output_folder)
@@ -158,6 +158,7 @@ def capture():
     data = request.json
     video_path = data.get('video_path')
     time_points_arrays = data.get('time_points_arrays')
+    mouse_IDs = data.get("mouse_IDs")
 
     if not video_path or not time_points_arrays:
         return jsonify({"error": "Missing video_path or time_points_arrays"}), 400
@@ -166,7 +167,7 @@ def capture():
 
     try:
         # Process all sets of time points
-        results = capture_screenshots(video_path, time_points_arrays)
+        results = capture_screenshots(video_path, time_points_arrays, mouse_IDs)
         return jsonify({"results": results})
     except Exception as e:
         app.logger.error(f"Error capturing screenshots: {str(e)}")
