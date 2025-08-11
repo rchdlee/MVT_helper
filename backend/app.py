@@ -81,7 +81,7 @@ def capture_screenshots(video_path, time_points_arrays, mouse_IDs): # multiple t
             # Loop through the specified time points and capture screenshots
             for i, time_point in enumerate(time_points):
                 # Ensure the time point is within the video duration
-                if time_point < 0 or time_point > video.duration:
+                if float(time_point) < 0 or float(time_point) > video.duration:
                 # if time_point < 0 or time_point > resized_video.duration:
                 # if time_point < 0 or time_point > cropped_video.duration:
                     app.logger.warning(f"Time point {time_point} is out of bounds for video.")
