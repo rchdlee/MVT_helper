@@ -362,8 +362,8 @@ function App() {
             </button>
           </div>
           {/* LEFT SIDE */}
-          <div className="flex flex-col justify-start h-full items-start">
-            <div className="flex gap-2">
+          <div className="flex flex-col justify-start h-full flex-1">
+            <div className="flex gap-2 items-start w-full self-start">
               <button onClick={backToStartHandler}>back</button>
               <p className="text-xs">{videoName}</p>
             </div>
@@ -373,7 +373,7 @@ function App() {
               // controls={true}
               playing={videoState.playing}
               // url={"https://www.youtube.com/watch?v=LXb3EKWsInQ"}
-              // width="auto"
+              width="100%"
               // height="auto"
               height="85%"
               onReady={handleVideoReady}
@@ -412,7 +412,7 @@ function App() {
           </div>
           {/* RIGHT SIDE */}
           {!isAtEnd && (
-            <div className="grow h-full flex flex-col justify-between">
+            <div className="w-[800px] h-full flex flex-col justify-between">
               <div>
                 <UserInputs
                   videoState={videoState}
