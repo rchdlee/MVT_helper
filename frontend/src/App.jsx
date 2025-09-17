@@ -82,6 +82,24 @@ function App() {
     };
   }, []);
 
+  // Handle spacebar for play/pause
+  useEffect(() => {
+    const handleKeyDown = (event) => {
+      // Only handle spacebar when not in an input field
+      if (event.code === 'Space' && event.target.tagName !== 'INPUT' && event.target.tagName !== 'TEXTAREA') {
+        event.preventDefault(); // Prevent page scroll
+        togglePlayStateHandler();
+      }
+    };
+
+    window.addEventListener("keydown", handleKeyDown);
+
+    // Clean up the event listener when the component unmounts
+    return () => {
+      window.removeEventListener("keydown", handleKeyDown);
+    };
+  }, [videoState.playing]); // Include videoState.playing in dependencies
+
   // // HANDLERS // //
   const handleFileUpload = (e) => {
     setVideoPath(URL.createObjectURL(e.target.files[0]));
@@ -357,7 +375,7 @@ function App() {
               // url={"https://www.youtube.com/watch?v=LXb3EKWsInQ"}
               // width="auto"
               // height="auto"
-              height="90%"
+              height="85%"
               onReady={handleVideoReady}
               onProgress={handleProgress}
               onSeek={handleVideoSeek}
@@ -368,7 +386,7 @@ function App() {
                 {videoState.playing && (
                   <button
                     onClick={togglePlayStateHandler}
-                    className="cursor-pointer"
+                    className="cursor-pointer text-4xl w-16 h-16 flex items-center justify-center hover:bg-gray-100 rounded"
                   >
                     ⏸
                   </button>
@@ -376,7 +394,7 @@ function App() {
                 {!videoState.playing && (
                   <button
                     onClick={togglePlayStateHandler}
-                    className="cursor-pointer"
+                    className="cursor-pointer text-4xl w-16 h-16 flex items-center justify-center hover:bg-gray-100 rounded"
                   >
                     ▶
                   </button>
