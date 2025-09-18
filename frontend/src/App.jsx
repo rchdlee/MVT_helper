@@ -82,13 +82,25 @@ function App() {
     };
   }, []);
 
-  // Handle spacebar for play/pause
+  // Handle spacebar for play/pause and arrow keys for seeking
   useEffect(() => {
     const handleKeyDown = (event) => {
-      // Only handle spacebar when not in an input field
-      if (event.code === 'Space' && event.target.tagName !== 'INPUT' && event.target.tagName !== 'TEXTAREA') {
-        event.preventDefault(); // Prevent page scroll
-        togglePlayStateHandler();
+      // Only handle keys when not in an input field
+      if (event.target.tagName !== 'INPUT' && event.target.tagName !== 'TEXTAREA') {
+        if (event.code === 'Space') {
+          event.preventDefault(); // Prevent page scroll
+          togglePlayStateHandler();
+        } else if (event.code === 'ArrowRight') {
+          event.preventDefault(); // Prevent page scroll
+          const currentTime = videoState.playedSec;
+          const newTime = Math.min(currentTime + 5, videoState.duration);
+          handleSeek(newTime);
+        } else if (event.code === 'ArrowLeft') {
+          event.preventDefault(); // Prevent page scroll
+          const currentTime = videoState.playedSec;
+          const newTime = Math.max(currentTime - 5, 0);
+          handleSeek(newTime);
+        }
       }
     };
 
@@ -98,7 +110,7 @@ function App() {
     return () => {
       window.removeEventListener("keydown", handleKeyDown);
     };
-  }, [videoState.playing]); // Include videoState.playing in dependencies
+  }, [videoState.playing, videoState.playedSec, videoState.duration]); // Include dependencies
 
   // // HANDLERS // //
   const handleFileUpload = (e) => {
