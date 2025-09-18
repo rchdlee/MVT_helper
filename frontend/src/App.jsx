@@ -114,9 +114,19 @@ function App() {
 
   // // HANDLERS // //
   const handleFileUpload = (e) => {
-    setVideoPath(URL.createObjectURL(e.target.files[0]));
+    const file = e.target.files[0];
+    const fileName = file.name;
+    const fileExtension = fileName.split('.').pop().toLowerCase();
+
+    // Check if it's a WMV file
+    if (fileExtension === 'wmv') {
+      alert('WMV files are not supported by most browsers. Please convert your WMV file to MP4 format for best compatibility.\n\nYou can use tools like FFmpeg or online converters to convert WMV to MP4.');
+      return;
+    }
+
+    setVideoPath(URL.createObjectURL(file));
     setVideoIsLoaded(true);
-    setVideoName(e.target.files[0].name);
+    setVideoName(fileName);
   };
 
   const backToStartHandler = () => {
