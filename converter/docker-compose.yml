@@ -1,0 +1,11 @@
+version: '3.8'
+
+services:
+  wmv-converter:
+    build: .
+    container_name: wmv-converter
+    # No default volumes or command - user must specify when running
+    # Example usage:
+    # docker-compose run --rm -v /path/to/wmv/files:/app/input wmv-converter /app/input
+    stdin_open: true
+    tty: true
