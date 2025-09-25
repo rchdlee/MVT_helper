@@ -82,11 +82,51 @@ function App() {
     };
   }, []);
 
+  // Handle spacebar for play/pause and arrow keys for seeking
+  useEffect(() => {
+    const handleKeyDown = (event) => {
+      // Only handle keys when not in an input field
+      if (event.target.tagName !== 'INPUT' && event.target.tagName !== 'TEXTAREA') {
+        if (event.code === 'Space') {
+          event.preventDefault(); // Prevent page scroll
+          togglePlayStateHandler();
+        } else if (event.code === 'ArrowRight') {
+          event.preventDefault(); // Prevent page scroll
+          const currentTime = videoState.playedSec;
+          const newTime = Math.min(currentTime + 5, videoState.duration);
+          handleSeek(newTime);
+        } else if (event.code === 'ArrowLeft') {
+          event.preventDefault(); // Prevent page scroll
+          const currentTime = videoState.playedSec;
+          const newTime = Math.max(currentTime - 5, 0);
+          handleSeek(newTime);
+        }
+      }
+    };
+
+    window.addEventListener("keydown", handleKeyDown);
+
+    // Clean up the event listener when the component unmounts
+    return () => {
+      window.removeEventListener("keydown", handleKeyDown);
+    };
+  }, [videoState.playing, videoState.playedSec, videoState.duration]); // Include dependencies
+
   // // HANDLERS // //
   const handleFileUpload = (e) => {
-    setVideoPath(URL.createObjectURL(e.target.files[0]));
+    const file = e.target.files[0];
+    const fileName = file.name;
+    const fileExtension = fileName.split('.').pop().toLowerCase();
+
+    // Check if it's a WMV file
+    if (fileExtension === 'wmv') {
+      alert('WMV files are not supported by most browsers. Please convert your WMV file to MP4 format for best compatibility.\n\nYou can use tools like FFmpeg or online converters to convert WMV to MP4.');
+      return;
+    }
+
+    setVideoPath(URL.createObjectURL(file));
     setVideoIsLoaded(true);
-    setVideoName(e.target.files[0].name);
+    setVideoName(fileName);
   };
 
   const backToStartHandler = () => {
@@ -344,8 +384,8 @@ function App() {
             </button>
           </div>
           {/* LEFT SIDE */}
-          <div className="flex flex-col justify-start h-full items-start">
-            <div className="flex gap-2">
+          <div className="flex flex-col justify-start h-full flex-1">
+            <div className="flex gap-2 items-start w-full self-start">
               <button onClick={backToStartHandler}>back</button>
               <p className="text-xs">{videoName}</p>
             </div>
@@ -355,9 +395,9 @@ function App() {
               // controls={true}
               playing={videoState.playing}
               // url={"https://www.youtube.com/watch?v=LXb3EKWsInQ"}
-              // width="auto"
+              width="100%"
               // height="auto"
-              height="90%"
+              height="85%"
               onReady={handleVideoReady}
               onProgress={handleProgress}
               onSeek={handleVideoSeek}
@@ -368,7 +408,7 @@ function App() {
                 {videoState.playing && (
                   <button
                     onClick={togglePlayStateHandler}
-                    className="cursor-pointer"
+                    className="cursor-pointer text-4xl w-16 h-16 flex items-center justify-center hover:bg-gray-100 rounded"
                   >
                     ⏸
                   </button>
@@ -376,7 +416,7 @@ function App() {
                 {!videoState.playing && (
                   <button
                     onClick={togglePlayStateHandler}
-                    className="cursor-pointer"
+                    className="cursor-pointer text-4xl w-16 h-16 flex items-center justify-center hover:bg-gray-100 rounded"
                   >
                     ▶
                   </button>
@@ -394,7 +434,7 @@ function App() {
           </div>
           {/* RIGHT SIDE */}
           {!isAtEnd && (
-            <div className="grow h-full flex flex-col justify-between">
+            <div className="w-[800px] h-full flex flex-col justify-between">
               <div>
                 <UserInputs
                   videoState={videoState}
