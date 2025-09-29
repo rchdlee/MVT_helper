@@ -4,6 +4,13 @@ import { createSlice, current } from "@reduxjs/toolkit";
 const initialState = {
   startTimeIRL: null,
   endTimeIRL: null,
+  metadata: {
+    first_mouse_enter_time: null,
+    group: null,
+    cohort: null,
+    date: null,
+    run: null,
+  },
   data: [
     {
       categoryName: "stats",
@@ -134,6 +141,14 @@ const annotationSlice = createSlice({
 
       // needs a check so that correct format is inputted
       state.endTimeIRL = endTime;
+    },
+    setMetadataValue: (state, action) => {
+      const data = action.payload;
+      const category = data.category;
+      const value = data.value;
+
+      state.metadata[category] = value;
+      console.log(state);
     },
     switchEventType: (state, action) => {
       const data = action.payload;
@@ -271,6 +286,7 @@ export const {
   addNewEvent,
   setStartTimeIRL,
   setEndTimeIRL,
+  setMetadataValue,
   switchEventType,
   setMeasureAtTime,
   setLocationString,

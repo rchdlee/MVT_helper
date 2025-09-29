@@ -46,6 +46,8 @@ function App() {
   const [popupMessage, setPopupMessage] = useState("");
   const [backendHasError, setBackendHasError] = useState(false);
 
+  const [metadataMenuIsOpen, setMetadataMenuIsOpen] = useState(false);
+
   const [zoom, setZoom] = useState(1);
 
   const [selectedAnnotationIdentifiers, setSelectedAnnotationIdentifiers] =
@@ -86,16 +88,19 @@ function App() {
   useEffect(() => {
     const handleKeyDown = (event) => {
       // Only handle keys when not in an input field
-      if (event.target.tagName !== 'INPUT' && event.target.tagName !== 'TEXTAREA') {
-        if (event.code === 'Space') {
+      if (
+        event.target.tagName !== "INPUT" &&
+        event.target.tagName !== "TEXTAREA"
+      ) {
+        if (event.code === "Space") {
           event.preventDefault(); // Prevent page scroll
           togglePlayStateHandler();
-        } else if (event.code === 'ArrowRight') {
+        } else if (event.code === "ArrowRight") {
           event.preventDefault(); // Prevent page scroll
           const currentTime = videoState.playedSec;
           const newTime = Math.min(currentTime + 5, videoState.duration);
           handleSeek(newTime);
-        } else if (event.code === 'ArrowLeft') {
+        } else if (event.code === "ArrowLeft") {
           event.preventDefault(); // Prevent page scroll
           const currentTime = videoState.playedSec;
           const newTime = Math.max(currentTime - 5, 0);
@@ -116,11 +121,13 @@ function App() {
   const handleFileUpload = (e) => {
     const file = e.target.files[0];
     const fileName = file.name;
-    const fileExtension = fileName.split('.').pop().toLowerCase();
+    const fileExtension = fileName.split(".").pop().toLowerCase();
 
     // Check if it's a WMV file
-    if (fileExtension === 'wmv') {
-      alert('WMV files are not supported by most browsers. Please convert your WMV file to MP4 format for best compatibility.\n\nYou can use tools like FFmpeg or online converters to convert WMV to MP4.');
+    if (fileExtension === "wmv") {
+      alert(
+        "WMV files are not supported by most browsers. Please convert your WMV file to MP4 format for best compatibility.\n\nYou can use tools like FFmpeg or online converters to convert WMV to MP4."
+      );
       return;
     }
 
@@ -441,6 +448,8 @@ function App() {
                   handleSeek={handleSeek}
                   reduxState={reduxState}
                   setFullPath={setFullPath}
+                  metadataMenuIsOpen={metadataMenuIsOpen}
+                  setMetadataMenuIsOpen={setMetadataMenuIsOpen}
                 />
 
                 <div className="w-full">

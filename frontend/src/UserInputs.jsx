@@ -1,6 +1,7 @@
 import { useRef } from "react";
 import { useDispatch } from "react-redux";
 import { setStartTimeIRL, setEndTimeIRL } from "./store/annotation-slice";
+import Metadata from "./Metadata";
 
 const UserInputs = (props) => {
   const filePathRef = useRef();
@@ -14,7 +15,7 @@ const UserInputs = (props) => {
   };
 
   return (
-    <div className="">
+    <div className="relative">
       {/* <div className="bg-green-100">
         <h3>duration:{props.videoState.duration}</h3>
         <h3>playedSec:{props.videoState.playedSec}</h3>
@@ -33,61 +34,79 @@ const UserInputs = (props) => {
             ref={filePathRef}
           />
         </div>
-        <div className="flex gap-1">
-          <div>
-            <div
-              onClick={() => props.handleSeek(0)}
-              className="group flex items-end gap-1 cursor-default"
-            >
-              <label
-                htmlFor="video_start_time"
-                className="text-sm group-hover:underline"
-                // onClick={() => props.handleSeek(0)}
+        <div className="flex gap-1 justify-between">
+          <div className="flex gap-1">
+            <div>
+              <div
+                onClick={() => props.handleSeek(0)}
+                className="group flex items-end gap-1 cursor-default"
               >
-                Start
-              </label>
-              <p>⏪</p>
+                <label
+                  htmlFor="video_start_time"
+                  className="text-sm group-hover:underline"
+                  // onClick={() => props.handleSeek(0)}
+                >
+                  Start
+                </label>
+                <p>⏪</p>
 
-              {/* <button onClick={() => props.handleSeek(0)}>Go to start</button> */}
+                {/* <button onClick={() => props.handleSeek(0)}>Go to start</button> */}
+              </div>
+              <input
+                type="text"
+                id="video_start_time"
+                className="border-[1px] text-sm p-[2px]"
+                onBlur={setStartTimeIRLHandler}
+                defaultValue={props.reduxState.startTimeIRL}
+                placeholder="HH:MM:SS:mmm"
+              />
             </div>
-            <input
-              type="text"
-              id="video_start_time"
-              className="border-[1px] text-sm p-[2px]"
-              onBlur={setStartTimeIRLHandler}
-              defaultValue={props.reduxState.startTimeIRL}
-              placeholder="HH:MM:SS:mmm"
-            />
-          </div>
-          <div>
-            <div
-              onClick={() => props.handleSeek(props.videoState?.duration)}
-              className="group flex items-end gap-1"
-            >
-              <label
-                htmlFor="video_end_time"
-                className="text-sm group-hover:underline"
+            <div>
+              <div
+                onClick={() => props.handleSeek(props.videoState?.duration)}
+                className="group flex items-end gap-1"
               >
-                End
-              </label>
-              <p className="cursor-default">⏩</p>
-              {/* <button
+                <label
+                  htmlFor="video_end_time"
+                  className="text-sm group-hover:underline"
+                >
+                  End
+                </label>
+                <p className="cursor-default">⏩</p>
+                {/* <button
                 onClick={() => props.handleSeek(props.videoState?.duration)}
               >
                 Go to end
               </button> */}
+              </div>
+              <input
+                type="text"
+                id="video_end_time"
+                className="border-[1px] text-sm p-[2px]"
+                onBlur={setEndTimeIRLHandler}
+                defaultValue={props.reduxState.endTimeIRL}
+                placeholder="HH:MM:SS:mmm"
+              />
             </div>
-            <input
-              type="text"
-              id="video_end_time"
-              className="border-[1px] text-sm p-[2px]"
-              onBlur={setEndTimeIRLHandler}
-              defaultValue={props.reduxState.endTimeIRL}
-              placeholder="HH:MM:SS:mmm"
-            />
+          </div>
+
+          <div className="flex items-center hover:underline pr-8 pt-2">
+            <button
+              onClick={() =>
+                props.setMetadataMenuIsOpen((prevState) => !prevState)
+              }
+            >
+              Metadata
+            </button>
           </div>
         </div>
       </div>
+      {props.metadataMenuIsOpen && (
+        <Metadata
+          setMetadataMenuIsOpen={props.setMetadataMenuIsOpen}
+          reduxState={props.reduxState}
+        />
+      )}
     </div>
   );
 };

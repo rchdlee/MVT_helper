@@ -5,6 +5,7 @@ import {
 } from "./helpers/SecondsTimeFormat";
 import EventSummary from "./EventSummary";
 import LoadSpinner from "./UI/LoadSpinner";
+import DownloadJSON from "./DownloadJSON";
 
 const End = (props) => {
   const fileName = props.videoName.split(".")[0] + "_eventdata";
@@ -171,16 +172,21 @@ const End = (props) => {
         </p>
       )}
 
-      <div className="group">
-        <CSVLink
-          data={csvData}
-          headers={headers}
-          filename={fileName}
-          className="flex gap-1"
-        >
-          <p className="group-hover:underline">Download CSV</p>
-          <p>⬇</p>
-        </CSVLink>
+      <div>
+        <div className="group">
+          <CSVLink
+            data={csvData}
+            headers={headers}
+            filename={fileName}
+            className="flex gap-1"
+          >
+            <p className="group-hover:underline">Download CSV</p>
+            <p>⬇</p>
+          </CSVLink>
+        </div>
+        <div>
+          <DownloadJSON />
+        </div>
       </div>
     </div>
   );
