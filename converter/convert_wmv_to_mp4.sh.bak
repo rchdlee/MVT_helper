@@ -1,0 +1,86 @@
+#!/bin/bash
+
+# Script to convert WMV files to MP4 format using ffmpeg
+# Usage: ./convert_wmv_to_mp4.sh <input_folder>
+
+# Check if input parameter is provided
+if [ $# -eq 0 ]; then
+    echo "Error: Please provide a folder path as input parameter"
+    echo "Usage: $0 <input_folder>"
+    exit 1
+fi
+
+# Get the input folder path
+INPUT_FOLDER="$1"
+
+# Check if the input folder exists
+if [ ! -d "$INPUT_FOLDER" ]; then
+    echo "Error: Folder '$INPUT_FOLDER' does not exist"
+    exit 1
+fi
+
+# Create mp4 subfolder if it doesn't exist
+MP4_FOLDER="$INPUT_FOLDER/mp4"
+if [ ! -d "$MP4_FOLDER" ]; then
+    echo "Creating mp4 folder: $MP4_FOLDER"
+    mkdir -p "$MP4_FOLDER"
+fi
+
+# Check if ffmpeg is installed
+if ! command -v ffmpeg &> /dev/null; then
+    echo "Error: ffmpeg is not installed. Please install ffmpeg first."
+    echo "You can install it using: brew install ffmpeg (on macOS)"
+    exit 1
+fi
+
+# Counter for processed files
+processed_count=0
+skipped_count=0
+
+echo "Starting WMV to MP4 conversion..."
+echo "Input folder: $INPUT_FOLDER"
+echo "Output folder: $MP4_FOLDER"
+echo "----------------------------------------"
+
+# Iterate over all WMV files in the input folder (no nesting)
+for wmv_file in "$INPUT_FOLDER"/*.wmv; do
+    # Check if any WMV files exist (glob expansion)
+    if [ ! -e "$wmv_file" ]; then
+        echo "No WMV files found in '$INPUT_FOLDER'"
+        break
+    fi
+    
+    # Get the filename without path
+    filename=$(basename "$wmv_file")
+    
+    # Create output filename by replacing .wmv with .mp4
+    mp4_filename="${filename%.wmv}.mp4"
+    mp4_path="$MP4_FOLDER/$mp4_filename"
+    
+    # Check if MP4 file already exists
+    if [ -f "$mp4_path" ]; then
+        echo "Skipping '$filename' - MP4 file already exists: $mp4_filename"
+        ((skipped_count++))
+        continue
+    fi
+    
+    echo "Converting: $filename -> $mp4_filename"
+    
+    # Convert WMV to MP4 using ffmpeg
+    if ffmpeg -i "$wmv_file" -c:v libx264 -c:a aac -preset medium -crf 23 "$mp4_path" -y 2>/dev/null; then
+        echo "✓ Successfully converted: $filename"
+        ((processed_count++))
+    else
+        echo "✗ Failed to convert: $filename"
+        # Remove the failed output file if it was created
+        [ -f "$mp4_path" ] && rm "$mp4_path"
+    fi
+    
+    echo "----------------------------------------"
+done
+
+# Summary
+echo "Conversion completed!"
+echo "Files processed: $processed_count"
+echo "Files skipped: $skipped_count"
+echo "Output location: $MP4_FOLDER"
