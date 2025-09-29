@@ -77,6 +77,43 @@ open "http://localhost:5173/"
 
 ```
 
+```bash
+#!/bin/zsh
+
+# --- Pre-cleanup: kill anything already on ports 5000 (backend) or 5173 (frontend) ---
+echo "Cleaning up any old processes on ports 5000 and 5173..."
+kill -9 $(lsof -t -i :5000 -sTCP:LISTEN 2>/dev/null) 2>/dev/null
+kill -9 $(lsof -t -i :5173 -sTCP:LISTEN 2>/dev/null) 2>/dev/null
+
+# Make conda commands available in this non-interactive shell:
+eval "$("$(conda info --base)"/bin/conda shell.zsh hook)"
+
+# Go to backend and start Python app
+cd [path-to-MVT_helper]/backend
+conda activate MVT_helper
+python3 app.py &
+
+# Go to frontend and start dev server
+cd [path-to-MVT_helper]/frontend
+npm run dev &
+
+# Open browser
+open "http://localhost:5173/"
+
+# --- Cleanup handling ---
+cleanup() {
+    echo "Stopping backend and frontend..."
+    kill $(jobs -p) 2>/dev/null
+    exit 0
+}
+
+trap cleanup SIGINT SIGTERM EXIT
+
+# Keep script alive so trap can work
+wait
+
+```
+
 Run the Script:
 
 ```bash

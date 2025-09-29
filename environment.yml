@@ -1,0 +1,27 @@
+name: MVT_helper # change this to whatever you want your env called
+channels:
+  - defaults
+  - conda-forge
+dependencies:
+  - python=3.13 # or whichever version you want
+  - numpy=2.2.2
+  - pillow=10.4.0
+  - tqdm=4.67.1
+  # the rest don’t always exist in conda-forge, so put them under pip
+  - pip
+  - pip:
+      - blinker==1.9.0
+      - click==8.1.8
+      - colorama==0.4.6
+      - decorator==5.1.1
+      - Flask==3.1.0
+      - Flask-Cors==5.0.0
+      - imageio==2.37.0
+      - imageio-ffmpeg==0.6.0
+      - itsdangerous==2.2.0
+      - Jinja2==3.1.5
+      - MarkupSafe==3.0.2
+      - moviepy==2.1.2
+      - proglog==0.1.10
+      - python-dotenv==1.0.1
+      - Werkzeug==3.1.3
