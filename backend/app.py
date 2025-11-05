@@ -24,8 +24,11 @@ import shutil
 import uuid
 import logging
 
+import tempfile
+import json
+
 app = Flask(__name__)
-CORS(app)
+CORS(app, origins=["http://localhost:5173"])
 
 # Enable debug logging
 app.logger.setLevel(logging.DEBUG)
@@ -155,19 +158,26 @@ def capture_screenshots_single(video_path, time_points_array): # for Screenshots
 
 @app.route('/capture', methods=['POST'])
 def capture():
-    data = request.json
-    video_path = data.get('video_path')
-    time_points_arrays = data.get('time_points_arrays')
-    mouse_IDs = data.get("mouse_IDs")
+    # data = request.json
+    # video_path = data.get('video_path')
+    # time_points_arrays = data.get('time_points_arrays')
+    # mouse_IDs = data.get("mouse_IDs")
 
-    if not video_path or not time_points_arrays:
+    video_file = request.files["video"]
+    time_points_arrays = json.loads(request.form["time_points_arrays"])
+    mouse_IDs = json.loads(request.form["mouse_IDs"])
+
+    if not video_file or not time_points_arrays:
         return jsonify({"error": "Missing video_path or time_points_arrays"}), 400
     
+    temp_path = os.path.join(tempfile.gettempdir(), video_file.filename)
+    video_file.save(temp_path)
+
     clear_screenshots_folder()
 
     try:
         # Process all sets of time points
-        results = capture_screenshots(video_path, time_points_arrays, mouse_IDs)
+        results = capture_screenshots(temp_path, time_points_arrays, mouse_IDs)
         return jsonify({"results": results})
     except Exception as e:
         app.logger.error(f"Error capturing screenshots: {str(e)}")

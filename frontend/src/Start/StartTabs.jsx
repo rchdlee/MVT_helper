@@ -1,6 +1,15 @@
 const StartTabs = (props) => {
   return (
     <div className="flex gap-4 justify-start mb-2 mt-2">
+      <div onClick={() => props.switchTabsHandler("select_folder")}>
+        <p
+          className={`${
+            props.openTab === "select_folder" ? "underline" : ""
+          } hover:underline cursor-pointer`}
+        >
+          Select Folder
+        </p>
+      </div>
       <div onClick={() => props.switchTabsHandler("new_mvt")}>
         <p
           className={`${

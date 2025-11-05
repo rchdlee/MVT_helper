@@ -316,21 +316,25 @@ const Annotations = (props) => {
               isVoid && event.measureAtTimeSec !== null;
 
             let color;
+            let width;
             if (isVoid && voidDataIsComplete) {
-              color = "bg-blue-400";
+              color = "bg-blue-400 z-50";
+              width = "w-[4px]";
             }
             if (isVoid && !voidDataIsComplete) {
-              color = "bg-red-500";
+              color = "bg-red-500 z-50";
+              width = "w-[4px]";
             }
             if (isLeak) {
               color = "bg-orange-400";
+              width = "w-[2px]";
             }
 
             return (
               //   <div>
               <button
                 key={event.eventID}
-                className={`${color} w-1 h-full absolute group`}
+                className={`${color} ${width} h-full absolute group`}
                 style={{
                   left: `${eventOffsetLeft}px`,
                 }}

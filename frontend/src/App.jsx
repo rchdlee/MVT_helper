@@ -29,6 +29,7 @@ function App() {
   const playerRef = useRef();
   // //
   const [videoPath, setVideoPath] = useState(null);
+  const [video, setVideo] = useState(null);
   // const [videoPath, setVideoPath] = useState(testVideo);
   // //
   const [videoName, setVideoName] = useState(null);
@@ -118,8 +119,12 @@ function App() {
   }, [videoState.playing, videoState.playedSec, videoState.duration]); // Include dependencies
 
   // // HANDLERS // //
-  const handleFileUpload = (e) => {
-    const file = e.target.files[0];
+  const handleFileUpload = (e, isFolder = false, mp4File) => {
+    let file;
+    console.log(isFolder, mp4File);
+
+    if (!isFolder) file = e.target.files[0];
+    if (isFolder) file = mp4File;
     const fileName = file.name;
     const fileExtension = fileName.split(".").pop().toLowerCase();
 
@@ -132,6 +137,8 @@ function App() {
     }
 
     setVideoPath(URL.createObjectURL(file));
+    console.log(file);
+    setVideo(file);
     setVideoIsLoaded(true);
     setVideoName(fileName);
   };
@@ -309,20 +316,32 @@ function App() {
       console.log(fullPath, timePointArray, "🚄");
       setIsAtEnd(true);
 
+      const formData = new FormData();
+      formData.append("video", video);
+      formData.append("time_points_arrays", JSON.stringify(timePointArray));
+      formData.append("mouse_IDs", JSON.stringify(mouseIDs));
+
       // console.log("completed.", videoName.split(".")[0], timePointArray);
       try {
-        const response = await axios.post("http://127.0.0.1:5000/capture", {
-          // video_path: "/Users/leery/Documents/0xC/VAI4MVT/src/media/CohEF2/CohEF2_ER1a_L10-GFP_F_predtA_7-6-2020.mov" ,
-          // video_path: videoName.split(".")[0],
-          // video_path: "C:\\Users\\rlee21\\Documents\\CohEM3\\video1mp4.mp4",
-          video_path: fullPath,
-          // time_points: timePoints.split(',').map(Number),
-          // time_points: [428, 428.1, 428.2,428.25,428.5,429, 12.4],
-          time_points_arrays: timePointArray,
-          // quadrant: "top-left",
-          // crop_area: cropArea,
-          mouse_IDs: mouseIDs,
-        });
+        const response = await axios.post(
+          "http://localhost:5000/capture",
+          formData,
+          {
+            headers: { "Content-Type": "multipart/form-data" },
+          }
+        );
+        // const response = await axios.post("http://127.0.0.1:5000/capture", {
+        //   // video_path: "/Users/leery/Documents/0xC/VAI4MVT/src/media/CohEF2/CohEF2_ER1a_L10-GFP_F_predtA_7-6-2020.mov" ,
+        //   // video_path: videoName.split(".")[0],
+        //   // video_path: "C:\\Users\\rlee21\\Documents\\CohEM3\\video1mp4.mp4",
+        //   video_path: fullPath,
+        //   // time_points: timePoints.split(',').map(Number),
+        //   // time_points: [428, 428.1, 428.2,428.25,428.5,429, 12.4],
+        //   time_points_arrays: timePointArray,
+        //   // quadrant: "top-left",
+        //   // crop_area: cropArea,
+        //   mouse_IDs: mouseIDs,
+        // });
 
         // setScreenshots(response.data.screenshots);
         // setHasScreenshots(true);
@@ -415,7 +434,8 @@ function App() {
                 {videoState.playing && (
                   <button
                     onClick={togglePlayStateHandler}
-                    className="cursor-pointer text-4xl w-16 h-16 flex items-center justify-center hover:bg-gray-100 rounded"
+                    // className="cursor-pointer text-4xl w-16 h-16 flex items-center justify-center hover:bg-gray-100 rounded"
+                    className="cursor-pointer text-xl w-8 h-8 flex items-center justify-center hover:bg-gray-100 rounded"
                   >
                     ⏸
                   </button>
@@ -423,7 +443,8 @@ function App() {
                 {!videoState.playing && (
                   <button
                     onClick={togglePlayStateHandler}
-                    className="cursor-pointer text-4xl w-16 h-16 flex items-center justify-center hover:bg-gray-100 rounded"
+                    // className="cursor-pointer text-4xl w-16 h-16 flex items-center justify-center hover:bg-gray-100 rounded"
+                    className="cursor-pointer text-xl w-8 h-8 flex items-center justify-center hover:bg-gray-100 rounded"
                   >
                     ▶
                   </button>
@@ -441,7 +462,8 @@ function App() {
           </div>
           {/* RIGHT SIDE */}
           {!isAtEnd && (
-            <div className="w-[800px] h-full flex flex-col justify-between">
+            <div className="w-[600px] h-full flex flex-col justify-between">
+              {/* <div className="w-[800px] h-full flex flex-col justify-between"> */}
               <div>
                 <UserInputs
                   videoState={videoState}

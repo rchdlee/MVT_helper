@@ -5,10 +5,11 @@ import StartTabs from "./StartTabs";
 import NewMVT from "./NewMVT";
 import ScreenshotsCSV from "./ScreenshotsCSV";
 import LoadMVT from "./LoadMVT";
+import SelectFolder from "./SelectFolder";
 
 const Start = (props) => {
   // tabs for start screen: new_mvt, load_mvt, screenshot
-  const [openTab, setOpenTab] = useState("new_mvt");
+  const [openTab, setOpenTab] = useState("select_folder");
 
   const input1 = useRef();
   const input2 = useRef();
@@ -60,6 +61,17 @@ const Start = (props) => {
           // setOpenTab={setOpenTab}
           switchTabsHandler={switchTabsHandler}
         />
+        {openTab === "select_folder" && (
+          <SelectFolder
+            input1={input1}
+            input2={input2}
+            input3={input3}
+            input4={input4}
+            videoIsLoaded={props.videoIsLoaded}
+            handleFileUpload={props.handleFileUpload}
+            continueHandler={continueHandler}
+          />
+        )}
         {openTab === "new_mvt" && (
           <NewMVT
             input1={input1}
