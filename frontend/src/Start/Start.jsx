@@ -23,7 +23,7 @@ const Start = (props) => {
     props.setVideoIsLoaded(false);
   };
 
-  const continueHandler = () => {
+  const continueHandler = (needToSetupCategories = true) => {
     const inputValues = [
       input1.current.value,
       input2.current.value,
@@ -46,7 +46,10 @@ const Start = (props) => {
       return;
     }
 
-    dispatch(setupCategories(inputValues));
+    if (needToSetupCategories) {
+      console.log("setting up categories with ", inputValues);
+      dispatch(setupCategories(inputValues));
+    }
     props.setIsAtStart(false);
   };
 
@@ -70,6 +73,9 @@ const Start = (props) => {
             videoIsLoaded={props.videoIsLoaded}
             handleFileUpload={props.handleFileUpload}
             continueHandler={continueHandler}
+            loadedMetadata={props.loadedMetadata}
+            setLoadedMetadata={props.setLoadedMetadata}
+            setIsAtStart={props.setIsAtStart}
           />
         )}
         {openTab === "new_mvt" && (

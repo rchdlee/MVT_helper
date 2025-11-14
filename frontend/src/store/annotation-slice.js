@@ -2,14 +2,19 @@ import { createSlice, current } from "@reduxjs/toolkit";
 // import { v4 as uuidv4 } from "uuid";
 
 const initialState = {
-  startTimeIRL: null,
-  endTimeIRL: null,
+  // startTimeIRL: null,
+  // endTimeIRL: null,
   metadata: {
+    video_start_time: null,
+    video_end_time: null,
     first_mouse_enter_time: null,
     group: null,
     cohort: null,
     date: null,
     run: null,
+    mice: null,
+    analyzed_date: null,
+    analyzed_by: null,
   },
   data: [
     {
@@ -128,19 +133,23 @@ const annotationSlice = createSlice({
           measureAtTimeSec: null,
           location: "",
           note: "",
+          pixelArea: null,
+          calculations: null,
         });
     },
     setStartTimeIRL: (state, action) => {
       const startTime = action.payload;
 
       // needs a check so that the correct format is inputted
-      state.startTimeIRL = startTime;
+      // state.startTimeIRL = startTime;
+      state.metadata.video_start_time = startTime;
     },
     setEndTimeIRL: (state, action) => {
       const endTime = action.payload;
 
       // needs a check so that correct format is inputted
-      state.endTimeIRL = endTime;
+      // state.endTimeIRL = endTime;
+      state.metadata.video_end_time = endTime;
     },
     setMetadataValue: (state, action) => {
       const data = action.payload;
@@ -274,8 +283,11 @@ const annotationSlice = createSlice({
     // LOAD MVT
     loadCategories: (state, action) => {
       const data = action.payload.data;
-
       state.data = data;
+    },
+    loadMetadata: (state, action) => {
+      const metadata = action.payload.metadata;
+      state.metadata = metadata;
     },
   },
 });
@@ -294,6 +306,7 @@ export const {
   editEventTime,
   deleteEvent,
   loadCategories,
+  loadMetadata,
 } = annotationSlice.actions;
 
 export default annotationSlice.reducer;

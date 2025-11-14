@@ -17,7 +17,7 @@ import { useKeyPress } from "./helpers/useKeyPress";
 const Annotations = (props) => {
   const dispatch = useDispatch();
   const reduxState = useSelector((state) => state.annotation.data);
-  //   console.log(reduxState);
+  console.log(reduxState, "🎨");
 
   const timelineContainerRef = useRef();
   const [timelineContainerWidth, setTimelineContainerWidth] = useState(null);

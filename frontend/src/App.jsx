@@ -35,6 +35,8 @@ function App() {
   const [videoName, setVideoName] = useState(null);
   const [videoIsLoaded, setVideoIsLoaded] = useState(false);
   const [fullPath, setFullPath] = useState(null);
+
+  const [loadedMetadata, setLoadedMetadata] = useState(null); // for pre-filling information when looking at a video that was already completed
   // //
   const [isAtStart, setIsAtStart] = useState(true);
   // const [isAtStart, setIsAtStart] = useState(false);
@@ -123,8 +125,8 @@ function App() {
     let file;
     console.log(isFolder, mp4File);
 
-    if (!isFolder) file = e.target.files[0];
-    if (isFolder) file = mp4File;
+    if (!isFolder) file = e.target.files[0]; // for when uploading the video itself
+    if (isFolder) file = mp4File; // for when uploading a folder. mp4 file is sent in fn call from SelectFolder.jsx
     const fileName = file.name;
     const fileExtension = fileName.split(".").pop().toLowerCase();
 
@@ -136,9 +138,8 @@ function App() {
       return;
     }
 
-    setVideoPath(URL.createObjectURL(file));
-    console.log(file);
-    setVideo(file);
+    setVideoPath(URL.createObjectURL(file)); // currently using this for video URL for ReactPlayer
+    setVideo(file); // this is the important one for new backend processing of screenshots without typing in video path
     setVideoIsLoaded(true);
     setVideoName(fileName);
   };
@@ -260,10 +261,12 @@ function App() {
     // console.log(mouseIDs);
 
     const startTimeIsCorrectFormat = checkStartEndTimeInputFormat(
-      reduxState.startTimeIRL
+      // reduxState.startTimeIRL
+      reduxState.metadata.video_start_time
     );
     const endTimeIsCorrectFormat = checkStartEndTimeInputFormat(
-      reduxState.endTimeIRL
+      // reduxState.endTimeIRL
+      reduxState.metadata.video_end_time
     );
     console.log(startTimeIsCorrectFormat, endTimeIsCorrectFormat);
     if (startTimeIsCorrectFormat !== true || endTimeIsCorrectFormat !== true) {
@@ -389,6 +392,8 @@ function App() {
           videoIsLoaded={videoIsLoaded}
           setVideoIsLoaded={setVideoIsLoaded}
           setIsAtStart={setIsAtStart}
+          loadedMetadata={loadedMetadata}
+          setLoadedMetadata={setLoadedMetadata}
         />
       )}
       {/* {!isAtStart && !isAtEnd && ( */}

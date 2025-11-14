@@ -8,7 +8,8 @@ import LoadSpinner from "./UI/LoadSpinner";
 import DownloadJSON from "./DownloadJSON";
 
 const End = (props) => {
-  const fileName = props.videoName.split(".")[0] + "_eventdata";
+  const baseName = props.videoName.slice(0, props.videoName.lastIndexOf("."));
+  const fileName = `${baseName}_eventdata.csv`;
 
   const backButtonHandler = () => {
     props.setZoom(1);
@@ -17,7 +18,8 @@ const End = (props) => {
   };
 
   const addSecondsToActualStartTime = (timeSec) => {
-    const startTime = props.data.startTimeIRL;
+    const startTime = props.data.metadata.video_start_time;
+    // const startTime = props.data.startTimeIRL;
     const startTimeArray = startTime.split(":");
 
     const startTimeInSec =
@@ -74,8 +76,10 @@ const End = (props) => {
     return numberFrames;
   };
   const numberFrames = calculateFrameNumber(
-    props.data.startTimeIRL,
-    props.data.endTimeIRL
+    props.data.metadata.video_start_time,
+    props.data.metadata.video_end_time
+    // props.data.startTimeIRL,
+    // props.data.endTimeIRL
   );
 
   const calculateVideoClockTime = (timeSec) => {
@@ -117,6 +121,8 @@ const End = (props) => {
     { label: "Actual Measure Time (s)", key: "actual_measure_time" },
     { label: "Video Event Time (s)", key: "video_event_time" },
     { label: "Video Measure Time (s)", key: "video_measure_time" },
+    { label: "Pixel Area", key: "pixel_area" },
+    { label: "Calculations", key: "calculations" },
   ];
 
   const csvData = [];
@@ -136,6 +142,8 @@ const End = (props) => {
             : "",
         video_event_time: event.eventTimeSec,
         video_measure_time: event.measureAtTimeSec,
+        pixel_area: event.pixelArea,
+        calculations: event.calculations,
       });
     });
   });
