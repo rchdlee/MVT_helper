@@ -11,7 +11,7 @@
 
 
 from flask import Flask, request, jsonify
-from flask_cors import CORS
+from flask_cors import CORS, cross_origin
 # from moviepy.video.io.VideoFileClip import VideoFileClip
 # # from moviepy.editor import resize
 # # from moviepy.video.fx.Crop import Crop
@@ -24,11 +24,18 @@ import shutil
 import uuid
 import logging
 
+from werkzeug.utils import secure_filename
 import tempfile
 import json
 
 app = Flask(__name__)
-CORS(app, origins=["http://localhost:5173"])
+# CORS(app, origins=["http://localhost:5173"])
+# CORS(app, 
+#     resources={r"/capture": {"origins": "http://localhost:5173"}},
+#     supports_credentials=True
+# )
+app = Flask(__name__)
+CORS(app, resources={r"/*": {"origins": "*"}})
 
 # Enable debug logging
 app.logger.setLevel(logging.DEBUG)
@@ -170,7 +177,24 @@ def capture():
     if not video_file or not time_points_arrays:
         return jsonify({"error": "Missing video_path or time_points_arrays"}), 400
     
-    temp_path = os.path.join(tempfile.gettempdir(), video_file.filename)
+    # temp_dir = os.path.join(tempfile.gettempdir(), "test_finished")
+    # os.makedirs(temp_dir, exist_ok=True)
+    
+    # # temp_path = os.path.join(tempfile.gettempdir(), video_file.filename)
+    # temp_path = os.path.join(temp_dir, video_file.filename)
+    # video_file.save(temp_path)
+
+    # temp_dir = os.path.join(tempfile.gettempdir(), "test_finished")
+    temp_dir = tempfile.gettempdir()
+    os.makedirs(temp_dir, exist_ok=True)
+
+    # Strip any folder paths sent by the browser
+    raw_name = video_file.filename
+    just_name = os.path.basename(raw_name)      # <-- removes test_finished/ prefix
+    safe_name = secure_filename(just_name)      # <-- removes weird characters
+
+    temp_path = os.path.join(temp_dir, safe_name)
+
     video_file.save(temp_path)
 
     clear_screenshots_folder()
