@@ -42,13 +42,13 @@ const UserInputs = (props) => {
         <h3>playedFrac:{props.videoState.playedFrac}</h3>
       </div> */}
       <div className="bg-pink-100 p-2">
-        <div className="flex gap-2">
-          {/* <h3>Metadata</h3> */}
+        {/* <div className="flex gap-2">
+          <h3>Metadata</h3>
           <div className="flex gap-1">
             <p className="text-red-700">*</p>
             <p className="text-xs">= required</p>
           </div>
-        </div>
+        </div> */}
         {/* <div className="flex flex-col">
           <label htmlFor="parent_folder_path" className="text-sm pb-1">
             Full File Path

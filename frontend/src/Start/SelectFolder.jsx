@@ -16,7 +16,8 @@ const SelectFolder = (props) => {
   const [folderName, setFolderName] = useState(null);
   const [mp4FileName, setMp4FileName] = useState(null);
   const [metadataFileExists, setMetadataFileExists] = useState(false);
-  // const [csvData, setCsvData] = useState(null);
+  const [csvFileExists, setCsvFileExists] = useState(false);
+  const [csvFileData, setCsvFileData] = useState(null);
 
   const handleFolderUpload = async (e) => {
     const files = Array.from(e.target.files);
@@ -73,11 +74,52 @@ const SelectFolder = (props) => {
     } else {
       console.log("metadata.json was not found in folder");
       // props.setLoadedMetadata(null);
-      return;
+      // return;
+    }
+
+    if (!metadataFile) {
+      const mouseInputValuesRaw = [
+        props.input1.current.value,
+        props.input2.current.value,
+        props.input3.current.value,
+        props.input4.current.value,
+      ];
+      const mouseInputValues = mouseInputValuesRaw.filter(Boolean);
+      console.log("setting mouseIDs", mouseInputValues);
+      mouseIDs = mouseInputValues; // I know this is dirty. Too lazy to fix right now
+    }
+
+    if (csvFile) {
+      setCsvFileExists(true);
+      setCsvFileData(csvFile);
+    }
+  };
+
+  const continueHandler = async () => {
+    const mouseInputValuesRaw = [
+      props.input1.current.value,
+      props.input2.current.value,
+      props.input3.current.value,
+      props.input4.current.value,
+    ];
+    const mouseInputValues = mouseInputValuesRaw.filter(Boolean); // put this outside function
+
+    if (!metadataFileExists) {
+      console.log("METADATA FILE DOES NOT EXIST");
+
+      console.log(mouseInputValues);
+      dispatch(
+        setMetadataValue({
+          category: "mice",
+          value: mouseInputValues,
+        })
+      );
+      dispatch(setupCategories(mouseInputValues));
     }
 
     // Parse CSV file and re-construct redux state
-    if (csvFile) {
+    // if (csvFile) {
+    if (csvFileExists) {
       const parseCsv = (file) => {
         return new Promise((resolve) => {
           Papa.parse(file, {
@@ -91,20 +133,8 @@ const SelectFolder = (props) => {
         });
       };
 
-      const csvData = await parseCsv(csvFile);
-
-      // let csvData;
-      // Papa.parse(csvFile, {
-      //   header: true,
-      //   skipEmptyLines: true,
-      //   complete: (results) => {
-      //     console.log("parsed csv:", results.data);
-      //     csvData = results.data;
-      //     // setCsvData(results.data);
-      //   },
-      // });
-
-      // console.log(csvData);
+      // const csvData = await parseCsv(csvFile);
+      const csvData = await parseCsv(csvFileData);
 
       const initialReduxData = [
         {
@@ -113,9 +143,10 @@ const SelectFolder = (props) => {
         },
       ];
 
-      console.log(csvData, mouseIDs);
+      // console.log(csvData, mouseIDs);
 
-      mouseIDs.forEach((mouse) => {
+      // mouseIDs.forEach((mouse) => {
+      mouseInputValues.forEach((mouse) => {
         initialReduxData.push({
           categoryName: mouse,
           events: [],
@@ -144,28 +175,6 @@ const SelectFolder = (props) => {
 
       console.log(initialReduxData, "🎡");
       dispatch(loadCategories({ data: initialReduxData }));
-    }
-  };
-
-  const continueHandler = () => {
-    if (!metadataFileExists) {
-      console.log("METADATA FILE DOES NOT EXIST");
-      const mouseInputValuesRaw = [
-        props.input1.current.value,
-        props.input2.current.value,
-        props.input3.current.value,
-        props.input4.current.value,
-      ];
-      const mouseInputValues = mouseInputValuesRaw.filter(Boolean);
-
-      console.log(mouseInputValues);
-      dispatch(
-        setMetadataValue({
-          category: "mice",
-          value: mouseInputValues,
-        })
-      );
-      dispatch(setupCategories(mouseInputValues));
     }
 
     props.setIsAtStart(false);
