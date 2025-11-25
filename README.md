@@ -122,7 +122,7 @@ Run the Script:
 
 ## Start
 
-![Screenshot of the MVT Helper Start screen](/images/start_20251125.PNG)
+<img src="/images/start_20251125.PNG" width="300">
 
 - On application start, you should be on the "Select Folder" tab.
 - Make sure your video is .mp4 or .mov format. The browser is unable to work with .wmv files.
