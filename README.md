@@ -33,9 +33,6 @@ Create Python Environment
 ```bash
 # Make sure to replace `[path-to-MVT_HELPER-folder]`
 cd [path-to-MVT_HELPER-folder]/backend # Navigate to backend folder
-```
-
-```bash
 pip install pipenv # Install pipenv
 pipenv install -r requirements.txt # Install packages
 ```
@@ -45,9 +42,6 @@ Install Frontend Packages
 ```bash
 # Make sure to replace `[path-to-MVT_HELPER-folder]`
 cd [path-to-MVT_HELPER-folder]/frontend # Navigate to frontend folder
-```
-
-```bash
 npm install # Install packages
 ```
 
@@ -111,7 +105,7 @@ wait
 chmod +x start.command
 ```
 
-Run the Script:
+Run the Script. You can double click the start script instead of typing it into the command line.
 
 ```bash
 ./start.bat # Windows
@@ -122,7 +116,7 @@ Run the Script:
 
 ## Start
 
-<img src="/images/start_20251125.PNG" width="300">
+<img src="/images/start_20251125.PNG" width="450">
 
 - On application start, you should be on the "Select Folder" tab.
 - Make sure your video is .mp4 or .mov format. The browser is unable to work with .wmv files.
@@ -132,7 +126,7 @@ Run the Script:
 
 ## Annotator
 
-![Screenshot of the MVT Helper main interface](/images/annotator_20251125.PNG)
+![Screenshot of the MVT Helper main interface](/images/annotator_20251125.png)
 
 > ⭐ = required
 
