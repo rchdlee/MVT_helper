@@ -141,7 +141,7 @@ Run the Script. You can double click the start script instead of typing it into 
 9. Type event notes here.
 10. Delete currently selected event (No undo)
 11. Video time scroll
-12. Zoom timeline in/out. R = reset zoom. Zoom can also be controlled by clicking the `+` or `-` buttons, or by scrolling up/down
+12. Zoom timeline in/out. R = reset zoom. Zoom can also be controlled by clicking the `+` or `-` keys, or by scrolling up/down
 13. The annotator timeline. Mark all video events here. The mouse ID's you entered at the start screen should each have their own row. The (temporary) "Stats" row can be used to make a screenshot of calibration squares and to mark first mouse in/last mouse out
 14. Example void event with measure time (blue)
 15. Currently selected event (has circular handle on event marker)
@@ -159,3 +159,13 @@ Once submitted, screenshots will be populated in `MVT_helper > backend > screens
 Event information will be stored in the generated CSV. Columns B-E of the CSV can be pasted into `MVT Template RL.xlsx`
 
 Metadata about the video and mouse ID's will be stored in metadata.json. Move this into the video folder.
+
+## Contact
+
+Please reach out with any bugs, comments, or suggestions to rlee21@bidmc.harvard.edu
+
+Current list of suggestions to implement:
+
+- Mouse scroll -> scrub through video instead of timeline zoom. Maybe timeline zoom with mouse scroll could be mapped to Shift + scroll
+- Edit annotation timeline so that it is longer and spans the bottom of the screen, instead of on the right side. Would allow for the video to be larger.
+- Implementation + integration of analysis pipeline. Currently it is a separate and unfinished repo: https://github.com/rchdlee/MVT_toolbox/
