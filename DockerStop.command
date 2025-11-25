@@ -1,8 +1,9 @@
 #!/bin/bash
-cd "$(dirname "$0")" || exit 1
-
 echo "Stopping application..."
+
 docker compose down
 
-echo "Application stopped."
-read -p "Press Enter to close..."
+echo "Stopping Docker Desktop VM..."
+osascript -e 'quit app "Docker"'
+
+echo "Done."

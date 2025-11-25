@@ -56,7 +56,7 @@ const UserInputs = (props) => {
           <input
             type="text"
             id="parent_folder_path"
-            className="border-[1px] text-sm p-[2px]"
+            className="border-[1px] text-sm px-[2px]"
             onBlur={() => props.setFullPath(filePathRef.current.value)}
             ref={filePathRef}
           />
@@ -70,7 +70,7 @@ const UserInputs = (props) => {
               >
                 <label
                   htmlFor="video_start_time"
-                  className="text-sm group-hover:underline"
+                  className="text-xs group-hover:underline"
                   // onClick={() => props.handleSeek(0)}
                 >
                   Start
@@ -83,7 +83,7 @@ const UserInputs = (props) => {
               <input
                 type="text"
                 id="video_start_time"
-                className="border-[1px] text-sm p-[2px]"
+                className="border-[1px] text-sm px-[2px]"
                 onBlur={setStartTimeIRLHandler}
                 // defaultValue={props.reduxState.startTimeIRL}
                 defaultValue={props.reduxState.metadata.video_start_time}
@@ -97,7 +97,7 @@ const UserInputs = (props) => {
               >
                 <label
                   htmlFor="video_end_time"
-                  className="text-sm group-hover:underline"
+                  className="text-xs group-hover:underline"
                 >
                   End
                 </label>
@@ -112,7 +112,7 @@ const UserInputs = (props) => {
               <input
                 type="text"
                 id="video_end_time"
-                className="border-[1px] text-sm p-[2px]"
+                className="border-[1px] text-sm px-[2px]"
                 onBlur={setEndTimeIRLHandler}
                 // defaultValue={props.reduxState.endTimeIRL}
                 defaultValue={props.reduxState.metadata.video_end_time}
@@ -128,7 +128,7 @@ const UserInputs = (props) => {
               <input
                 type="text"
                 id="first_mouse_enter_time"
-                className="border-[1px] text-sm p-[2px]"
+                className="border-[1px] text-sm px-[2px]"
                 placeholder="hh:mm:ss"
                 defaultValue={metadataRedux.first_mouse_enter_time}
                 onBlur={setMetadataHandler}
@@ -143,7 +143,7 @@ const UserInputs = (props) => {
               <input
                 type="text"
                 id="group"
-                className="border-[1px] text-sm p-[2px]"
+                className="border-[1px] text-sm px-[2px]"
                 placeholder="e.g., TeenF"
                 defaultValue={metadataRedux.group}
                 onBlur={setMetadataHandler}
@@ -158,7 +158,7 @@ const UserInputs = (props) => {
               <input
                 type="text"
                 id="cohort"
-                className="border-[1px] text-sm p-[2px]"
+                className="border-[1px] text-sm px-[2px]"
                 placeholder="e.g., TeenF2"
                 defaultValue={metadataRedux.cohort}
                 onBlur={setMetadataHandler}
@@ -173,7 +173,7 @@ const UserInputs = (props) => {
               <input
                 type="text"
                 id="date"
-                className="border-[1px] text-sm p-[2px]"
+                className="border-[1px] text-sm px-[2px]"
                 placeholder="yyyymmdd"
                 defaultValue={metadataRedux.date}
                 onBlur={setMetadataHandler}
@@ -188,7 +188,7 @@ const UserInputs = (props) => {
               <input
                 type="text"
                 id="run"
-                className="border-[1px] text-sm p-[2px]"
+                className="border-[1px] text-sm px-[2px]"
                 placeholder="run"
                 defaultValue={metadataRedux.run}
                 onBlur={setMetadataHandler}
@@ -203,7 +203,7 @@ const UserInputs = (props) => {
               <input
                 type="text"
                 id="analyzed_date"
-                className="border-[1px] text-sm p-[2px]"
+                className="border-[1px] text-sm px-[2px]"
                 placeholder="yyyymmdd"
                 defaultValue={metadataRedux.analyzed_date}
                 onBlur={setMetadataHandler}
@@ -218,7 +218,7 @@ const UserInputs = (props) => {
               <input
                 type="text"
                 id="analyzed_by"
-                className="border-[1px] text-sm p-[2px]"
+                className="border-[1px] text-sm px-[2px]"
                 placeholder="initials"
                 defaultValue={metadataRedux.analyzed_by}
                 onBlur={setMetadataHandler}
