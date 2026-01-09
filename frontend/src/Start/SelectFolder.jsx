@@ -24,7 +24,10 @@ const SelectFolder = (props) => {
     if (files.length === 0) return;
     const folderName = files[0].webkitRelativePath.split("/")[0];
 
-    const mp4File = files.find((f) => f.name.toLowerCase().endsWith(".mp4"));
+    let mp4File = files.find((f) => f.name.toLowerCase().endsWith(".mp4"));
+    if (!mp4File)
+      mp4File = files.find((f) => f.name.toLowerCase().endsWith(".mov"));
+
     const metadataFile = files.find((f) =>
       f.name.toLowerCase().includes("metadata.json")
     );
