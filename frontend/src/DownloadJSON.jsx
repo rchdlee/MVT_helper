@@ -1,6 +1,6 @@
 import { useSelector } from "react-redux";
 
-const DownloadJSON = () => {
+const DownloadJSON = (props) => {
   const metadataRedux = useSelector((state) => state.annotation.metadata);
 
   const downloadJSON = () => {
@@ -11,7 +11,7 @@ const DownloadJSON = () => {
 
     const link = document.createElement("a");
     link.href = url;
-    link.download = "metadata.json"; // filename
+    link.download = `${props.videoBaseName}_metadata.json`; // filename
     link.click();
 
     URL.revokeObjectURL(url); // cleanup
