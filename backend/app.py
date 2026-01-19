@@ -99,8 +99,8 @@ def capture_screenshots(video_path, time_points_arrays, mouse_IDs): # multiple t
                     
                 # Capture the frame at the specified time using the cropped video
                
-                output_path = os.path.join(output_folder, f"frame_{i+1}_{time_point}.png")
-                print(video)
+                output_path = os.path.join(output_folder, f"{mouse_IDs[index]}_frame{i+1}_{time_point}.png")
+                # print(video)
                 video.save_frame(output_path, t=time_point)
                 # resized_video.save_frame(output_path, t=time_point)
                 # cropped_video.save_frame(output_path, t=time_point)
