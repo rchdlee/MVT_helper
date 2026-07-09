@@ -35,7 +35,7 @@ const End = (props) => {
     let newMin = Math.trunc((totalTimeSec - newHr * 3600) / 60);
     let newSec = Math.trunc(totalTimeSec - newHr * 3600 - newMin * 60);
     let newMsec = Math.trunc(
-      (totalTimeSec - newHr * 3600 - newMin * 60 - newSec) * 1000
+      (totalTimeSec - newHr * 3600 - newMin * 60 - newSec) * 1000,
     );
 
     if (newMsec.toString().length === 1) {
@@ -64,11 +64,11 @@ const End = (props) => {
     const endArr = end_time.split(":");
 
     const startTime = new Date(
-      `2025-01-01T${startArr[0]}:${startArr[1]}:${startArr[2]}.${startArr[3]}`
+      `2025-01-01T${startArr[0]}:${startArr[1]}:${startArr[2]}.${startArr[3]}`,
     );
 
     const endTime = new Date(
-      `2025-01-01T${endArr[0]}:${endArr[1]}:${endArr[2]}.${endArr[3]}`
+      `2025-01-01T${endArr[0]}:${endArr[1]}:${endArr[2]}.${endArr[3]}`,
     );
 
     const secDif = (endTime - startTime) / 1000;
@@ -77,7 +77,7 @@ const End = (props) => {
   };
   const numberFrames = calculateFrameNumber(
     props.data.metadata.video_start_time,
-    props.data.metadata.video_end_time
+    props.data.metadata.video_end_time,
     // props.data.startTimeIRL,
     // props.data.endTimeIRL
   );
@@ -193,7 +193,7 @@ const End = (props) => {
           </CSVLink>
         </div>
         <div>
-          <DownloadJSON />
+          <DownloadJSON baseName={baseName} />
         </div>
       </div>
     </div>

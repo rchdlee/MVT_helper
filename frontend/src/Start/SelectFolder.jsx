@@ -29,10 +29,10 @@ const SelectFolder = (props) => {
       mp4File = files.find((f) => f.name.toLowerCase().endsWith(".mov"));
 
     const metadataFile = files.find((f) =>
-      f.name.toLowerCase().includes("metadata.json")
+      f.name.toLowerCase().includes("metadata.json"),
     );
     const csvFile = files.find(
-      (f) => f.name.toLowerCase().includes(`_eventdata.csv`)
+      (f) => f.name.toLowerCase().includes(`_eventdata.csv`),
       // f.name.toLowerCase().includes(`${mp4File.name}_eventdata.csv`)
     );
 
@@ -115,7 +115,7 @@ const SelectFolder = (props) => {
         setMetadataValue({
           category: "mice",
           value: mouseInputValues,
-        })
+        }),
       );
       dispatch(setupCategories(mouseInputValues));
     }
@@ -159,7 +159,7 @@ const SelectFolder = (props) => {
       csvData.forEach((event) => {
         const eventCategory = event.Mouse;
         const reduxDataIndex = initialReduxData.findIndex(
-          (cat) => cat.categoryName === eventCategory
+          (cat) => cat.categoryName === eventCategory,
         );
 
         const formattedEventData = {
