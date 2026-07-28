@@ -193,7 +193,7 @@ const End = (props) => {
           </CSVLink>
         </div>
         <div>
-          <DownloadJSON videoBaseName={baseName} />
+          <DownloadJSON baseName={baseName} />
         </div>
       </div>
     </div>

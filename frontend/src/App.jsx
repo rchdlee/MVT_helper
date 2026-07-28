@@ -133,7 +133,7 @@ function App() {
     // Check if it's a WMV file
     if (fileExtension === "wmv") {
       alert(
-        "WMV files are not supported by most browsers. Please convert your WMV file to MP4 format for best compatibility.\n\nYou can use tools like FFmpeg or online converters to convert WMV to MP4."
+        "WMV files are not supported by most browsers. Please convert your WMV file to MP4 format for best compatibility.\n\nYou can use tools like FFmpeg or online converters to convert WMV to MP4.",
       );
       return;
     }
@@ -262,17 +262,17 @@ function App() {
 
     const startTimeIsCorrectFormat = checkStartEndTimeInputFormat(
       // reduxState.startTimeIRL
-      reduxState.metadata.video_start_time
+      reduxState.metadata.video_start_time,
     );
     const endTimeIsCorrectFormat = checkStartEndTimeInputFormat(
       // reduxState.endTimeIRL
-      reduxState.metadata.video_end_time
+      reduxState.metadata.video_end_time,
     );
     console.log(startTimeIsCorrectFormat, endTimeIsCorrectFormat);
     if (startTimeIsCorrectFormat !== true || endTimeIsCorrectFormat !== true) {
       console.log("NSEIRTNSRIE NOT CORRECT FORMAT");
       setPopupMessage(
-        'Start or End Time is incorrectly formatted. Make sure it is in "HH:MM:SS:mmm" format'
+        'Start or End Time is incorrectly formatted. Make sure it is in "HH:MM:SS:mmm" format',
       );
       setPopupIsOpen(true);
       return;
@@ -331,7 +331,7 @@ function App() {
           formData,
           {
             headers: { "Content-Type": "multipart/form-data" },
-          }
+          },
         );
         // const response = await axios.post("http://127.0.0.1:5000/capture", {
         //   // video_path: "/Users/leery/Documents/0xC/VAI4MVT/src/media/CohEF2/CohEF2_ER1a_L10-GFP_F_predtA_7-6-2020.mov" ,
@@ -354,7 +354,7 @@ function App() {
         console.error("Error capturing screenshots:", error);
         setBackendHasError(true);
         setPopupMessage(
-          "There was an error processing screenshots. The CSV is still good so please download it first. Then go back to the timeline and make sure the FULL video path is being passed in."
+          "There was an error processing screenshots. The CSV is still good so please download it first. Then go back to the timeline and make sure the FULL video path is being passed in.",
         );
         setPopupIsOpen(true);
         setBackendIsProcessing(false);
@@ -380,7 +380,7 @@ function App() {
   //
 
   const videoTimeInfo = `${secondsToMinAndSec(
-    videoState.playedSec
+    videoState.playedSec,
   )} / ${secondsToMinAndSec(videoState.duration)}`;
 
   return (

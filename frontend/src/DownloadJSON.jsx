@@ -11,7 +11,11 @@ const DownloadJSON = (props) => {
 
     const link = document.createElement("a");
     link.href = url;
+<<<<<<< HEAD
     link.download = `${props.videoBaseName}_metadata.json`; // filename
+=======
+    link.download = `${props.baseName}_metadata.json`; // filename
+>>>>>>> 68e358ba3e71586b3f10ffa6a93b5d15584b377f
     link.click();
 
     URL.revokeObjectURL(url); // cleanup
